@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.teambind'
 version = '0.0.1-SNAPSHOT'
-description = 'springProject'
+description = '팀바인드 이용관리 서버, 이용시간및 예약 가능시간 조회관련 서비스 서버'
 
 java {
     toolchain {
