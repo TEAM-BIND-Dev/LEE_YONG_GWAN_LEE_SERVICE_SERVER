@@ -9,7 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Snowflake ID Generator - Time-ordered 64-bit unique ID - Custom epoch - Supports multiple nodes
  *
- * <p>Author: MyungJoo Date: 2025-06-17
+ * Author: MyungJoo Date: 2025-06-17
  */
 @Component
 @Primary

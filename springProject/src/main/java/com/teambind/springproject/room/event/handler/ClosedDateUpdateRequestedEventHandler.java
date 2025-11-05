@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  * 휴무일 업데이트 요청 이벤트 핸들러.
- * <p>
+ * 
  * 비동기로 기존 슬롯의 상태를 CLOSED로 변경한다.
  */
 @Slf4j

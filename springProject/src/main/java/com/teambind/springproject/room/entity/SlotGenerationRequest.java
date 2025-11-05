@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 /**
  * 슬롯 생성 요청 엔티티.
- * <p>
+ * 
  * 비동기 슬롯 생성 작업의 상태를 추적한다.
  */
 @Entity

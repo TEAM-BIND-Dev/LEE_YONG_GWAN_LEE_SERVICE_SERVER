@@ -14,7 +14,7 @@ import java.util.Optional;
 
 /**
  * 슬롯 예약 대기 이벤트 핸들러.
- * <p>
+ * 
  * 여러 슬롯을 AVAILABLE → PENDING 상태로 전환한다.
  */
 @Slf4j

@@ -16,9 +16,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * WeeklySlotSchedule Value Object 단위 테스트.
- * <p>
+ * 
  * 테스트 범위:
- * <p>
+ * 
  * - 주간 슬롯 스케줄 생성
  * - 요일별 시작 시각 조회 (getStartTimesFor)
  * - 빈 스케줄 처리

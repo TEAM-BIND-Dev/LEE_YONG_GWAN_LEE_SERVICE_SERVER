@@ -11,13 +11,13 @@ import java.time.LocalTime;
 
 /**
  * 휴무일 정보를 담는 DTO.
- * <p>
+ * 
  * 날짜 기반 휴무와 패턴 기반 휴무를 모두 지원한다.
- * <ul>
- *   <li>날짜 기반: startDate, endDate 사용</li>
- *   <li>패턴 기반: dayOfWeek, recurrencePattern 사용</li>
- *   <li>startTime/endTime이 null이면 하루 종일 휴무</li>
- * </ul>
+ * 
+ *   날짜 기반: startDate, endDate 사용
+ *   패턴 기반: dayOfWeek, recurrencePattern 사용
+ *   startTime/endTime이 null이면 하루 종일 휴무
+ * 
  */
 @Getter
 @NoArgsConstructor

@@ -6,7 +6,7 @@ import java.time.temporal.IsoFields;
 /**
  * 운영 시간 반복 패턴을 나타내는 열거형.
  *
- * <p>각 패턴은 특정 날짜가 해당 패턴과 일치하는지 판단하는 로직을 포함한다.
+ * 각 패턴은 특정 날짜가 해당 패턴과 일치하는지 판단하는 로직을 포함한다.
  */
 public enum RecurrencePattern {
 	/**

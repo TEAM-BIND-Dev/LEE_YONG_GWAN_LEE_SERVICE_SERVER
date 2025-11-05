@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * 룸 초기 설정 컨트롤러.
- * <p>
+ * 
  * 룸의 운영 정책 및 휴무일을 설정하고 슬롯을 관리한다.
  */
 @Slf4j
@@ -29,7 +29,7 @@ public class RoomSetupController {
 
 	/**
 	 * 룸 운영 정책을 설정하고 슬롯 생성을 요청한다.
-	 * <p>
+	 * 
 	 * 운영 정책을 저장한 후, 슬롯 생성이 비동기로 처리되며, 즉시 202 Accepted 응답을 반환한다.
 	 *
 	 * @param request 운영 정책 설정 요청
@@ -69,7 +69,7 @@ public class RoomSetupController {
 
 	/**
 	 * 휴무일을 설정하고 기존 슬롯 업데이트를 요청한다.
-	 * <p>
+	 * 
 	 * 휴무일이 RoomOperatingPolicy에 추가되며,
 	 * 기존 슬롯의 상태가 비동기로 CLOSED로 변경된다.
 	 *

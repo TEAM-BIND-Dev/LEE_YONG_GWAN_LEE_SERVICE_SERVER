@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * 슬롯 예약 확정 이벤트 핸들러.
- * <p>
+ * 
  * 해당 예약의 모든 슬롯을 PENDING → RESERVED 상태로 전환한다.
  */
 @Slf4j

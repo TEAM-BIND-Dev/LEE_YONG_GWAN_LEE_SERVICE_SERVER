@@ -9,9 +9,9 @@ import java.time.LocalDateTime;
 
 /**
  * 휴무일 업데이트 요청 이벤트.
- * <p>
+ * 
  * RoomOperatingPolicy에 휴무일이 추가되었으며, 기존 슬롯의 상태를 CLOSED로 변경해야 함을 알린다.
- * <p>
+ * 
  * 경량 이벤트: 휴무일 데이터는 이벤트에 포함하지 않고, 핸들러가 DB에서 직접 조회한다.
  */
 @Getter

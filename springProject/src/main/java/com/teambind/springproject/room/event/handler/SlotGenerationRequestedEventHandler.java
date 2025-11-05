@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 슬롯 생성 요청 이벤트 핸들러.
- * <p>
+ * 
  * 비동기로 슬롯을 생성하고 상태를 업데이트한다.
  */
 @Slf4j

@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * 룸 운영 정책 설정 요청 DTO.
- * <p>
+ * 
  * 초기 설정 시 운영 시간 정보를 받아 RoomOperatingPolicy에 저장한다.
  */
 @Getter

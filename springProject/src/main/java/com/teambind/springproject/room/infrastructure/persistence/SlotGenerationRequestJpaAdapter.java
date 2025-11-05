@@ -11,14 +11,14 @@ import java.util.Optional;
 /**
  * SlotGenerationRequestPort의 JPA 구현체 (Adapter).
  *
- * <p>Hexagonal Architecture의 Adapter 패턴을 적용하여 도메인 계층과 인프라 계층을 분리한다.
+ * Hexagonal Architecture의 Adapter 패턴을 적용하여 도메인 계층과 인프라 계층을 분리한다.
  *
- * <p>SOLID 원칙:
- * <ul>
- *   <li>DIP (Dependency Inversion Principle): Port 인터페이스 구현으로 의존성 역전
- *   <li>SRP (Single Responsibility Principle): JPA 영속성 처리만 담당
- *   <li>OCP (Open-Closed Principle): 구현체 교체 가능 (JPA → MyBatis)
- * </ul>
+ * SOLID 원칙:
+ * 
+ *   DIP (Dependency Inversion Principle): Port 인터페이스 구현으로 의존성 역전
+ *   SRP (Single Responsibility Principle): JPA 영속성 처리만 담당
+ *   OCP (Open-Closed Principle): 구현체 교체 가능 (JPA → MyBatis)
+ * 
  */
 @Component
 @Transactional

@@ -20,11 +20,11 @@ import java.util.List;
 /**
  * 시간 슬롯 상태 관리 서비스 구현체.
  *
- * <p>Hexagonal Architecture 적용:
- * <ul>
- *   <li>Infrastructure 계층(JPA)에 직접 의존하지 않고 Port 인터페이스에 의존
- *   <li>DIP (Dependency Inversion Principle) 준수
- * </ul>
+ * Hexagonal Architecture 적용:
+ * 
+ *   Infrastructure 계층(JPA)에 직접 의존하지 않고 Port 인터페이스에 의존
+ *   DIP (Dependency Inversion Principle) 준수
+ * 
  */
 @Service
 @Transactional

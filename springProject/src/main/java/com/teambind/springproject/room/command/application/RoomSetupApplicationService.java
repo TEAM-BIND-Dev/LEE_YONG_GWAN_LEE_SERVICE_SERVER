@@ -28,15 +28,15 @@ import java.util.UUID;
 /**
  * 룸 초기 설정 Application Service.
  *
- * <p>룸의 초기 데이터 셋업을 담당한다.
+ * 룸의 초기 데이터 셋업을 담당한다.
  * 운영 정책 저장 후 비동기로 슬롯을 생성한다.
  *
- * <p>Hexagonal Architecture 적용:
- * <ul>
- *   <li>Infrastructure 계층(JPA)에 직접 의존하지 않고 Port 인터페이스에 의존
- *   <li>DIP (Dependency Inversion Principle) 준수
- *   <li>Use Case 조율만 담당 (비즈니스 로직은 DomainService/Entity에 위임)
- * </ul>
+ * Hexagonal Architecture 적용:
+ * 
+ *   Infrastructure 계층(JPA)에 직접 의존하지 않고 Port 인터페이스에 의존
+ *   DIP (Dependency Inversion Principle) 준수
+ *   Use Case 조율만 담당 (비즈니스 로직은 DomainService/Entity에 위임)
+ * 
  */
 @Slf4j
 @Service
@@ -58,7 +58,7 @@ public class RoomSetupApplicationService {
 
 	/**
 	 * 룸 운영 정책을 설정하고 슬롯 생성을 요청한다.
-	 * <p>
+	 * 
 	 * 플로우:
 	 * 1. 운영 정책을 RoomOperatingPolicy에 저장
 	 * 2. 슬롯 생성 요청을 DB에 저장 (상태: REQUESTED)

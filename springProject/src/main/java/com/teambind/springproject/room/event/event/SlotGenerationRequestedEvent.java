@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 /**
  * 슬롯 생성 요청 이벤트.
- * <p>
+ * 
  * 비동기로 슬롯 생성을 시작하기 위한 이벤트.
  */
 @Getter

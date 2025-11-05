@@ -3,7 +3,7 @@ package com.teambind.springproject.room.entity.enums;
 /**
  * 시간 슬롯의 상태를 나타내는 열거형.
  *
- * <p>슬롯의 생명주기:
+ * 슬롯의 생명주기:
  * AVAILABLE → PENDING → RESERVED → (CANCELLED or COMPLETED)
  * CLOSED는 초기 생성 시 운영하지 않는 시간대
  */

@@ -14,15 +14,15 @@ import java.util.Objects;
 /**
  * 휴무일 범위를 나타내는 Value Object.
  *
- * <p>특정 날짜 또는 날짜 범위의 휴무를 표현하며, 선택적으로 시간 범위도 지정할 수 있다.
- * <p>또한 반복 패턴 기반 휴무일도 지원한다 (예: 매주 월요일 09:00~10:00 휴무).
+ * 특정 날짜 또는 날짜 범위의 휴무를 표현하며, 선택적으로 시간 범위도 지정할 수 있다.
+ * 또한 반복 패턴 기반 휴무일도 지원한다 (예: 매주 월요일 09:00~10:00 휴무).
  *
- * <ul>
- *   <li>날짜 기반 휴무: startDate, endDate 사용</li>
- *   <li>패턴 기반 휴무: dayOfWeek, recurrencePattern 사용</li>
- *   <li>startTime/endTime이 null이면 하루 종일 휴무</li>
- *   <li>startTime/endTime이 있으면 해당 시간 범위만 휴무</li>
- * </ul>
+ * 
+ *   날짜 기반 휴무: startDate, endDate 사용
+ *   패턴 기반 휴무: dayOfWeek, recurrencePattern 사용
+ *   startTime/endTime이 null이면 하루 종일 휴무
+ *   startTime/endTime이 있으면 해당 시간 범위만 휴무
+ * 
  */
 @Embeddable
 public class ClosedDateRange {
@@ -156,7 +156,7 @@ public class ClosedDateRange {
 	
 	/**
 	 * 주어진 날짜가 이 휴무 범위에 포함되는지 확인한다.
-	 * <p>
+	 * 
 	 * 패턴 기반인 경우 요일과 반복 패턴을 체크하고,
 	 * 날짜 기반인 경우 날짜 범위를 체크한다.
 	 *

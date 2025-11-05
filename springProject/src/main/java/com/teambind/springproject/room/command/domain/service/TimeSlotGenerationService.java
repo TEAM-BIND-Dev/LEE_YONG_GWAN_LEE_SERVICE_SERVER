@@ -47,7 +47,7 @@ public interface TimeSlotGenerationService {
 	/**
 	 * 모든 룸의 특정 날짜에 대한 슬롯을 생성한다.
 	 *
-	 * <p>매일 배치 작업에서 호출된다.
+	 * 매일 배치 작업에서 호출된다.
 	 *
 	 * @param date 슬롯을 생성할 날짜
 	 * @return 생성된 슬롯 개수
@@ -57,7 +57,7 @@ public interface TimeSlotGenerationService {
 	/**
 	 * 어제 날짜의 슬롯을 삭제한다.
 	 *
-	 * <p>Rolling Window 유지를 위해 매일 배치 작업에서 호출된다.
+	 * Rolling Window 유지를 위해 매일 배치 작업에서 호출된다.
 	 *
 	 * @return 삭제된 슬롯 개수
 	 */
@@ -74,7 +74,7 @@ public interface TimeSlotGenerationService {
 	/**
 	 * 특정 룸의 미래 슬롯을 재생성한다.
 	 *
-	 * <p>정책 변경 시 호출된다.
+	 * 정책 변경 시 호출된다.
 	 *
 	 * @param roomId 룸 ID
 	 * @return 재생성된 슬롯 개수

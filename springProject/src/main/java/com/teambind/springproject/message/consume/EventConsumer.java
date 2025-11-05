@@ -21,7 +21,7 @@ import java.util.Map;
 
 /**
  * 통합 이벤트 컨슈머
- * <p>
+ * 
  * 모든 이벤트 토픽을 구독하여 eventType에 따라 적절한 핸들러로 라우팅한다.
  */
 @Slf4j

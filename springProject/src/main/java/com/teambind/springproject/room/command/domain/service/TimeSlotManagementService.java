@@ -36,7 +36,7 @@ public interface TimeSlotManagementService {
 	/**
 	 * 슬롯을 예약 확정 상태(RESERVED)로 변경한다.
 	 *
-	 * <p>결제 완료 이벤트 처리 시 호출된다.
+	 * 결제 완료 이벤트 처리 시 호출된다.
 	 *
 	 * @param roomId   룸 ID
 	 * @param slotDate 슬롯 날짜

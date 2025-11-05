@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 /**
  * 휴무일 업데이트 요청 엔티티.
- * <p>
+ * 
  * 비동기 휴무일 업데이트 작업의 상태를 추적한다.
  */
 @Entity

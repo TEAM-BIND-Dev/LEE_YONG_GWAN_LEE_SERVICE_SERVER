@@ -9,9 +9,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * HourStatus Enum 단위 테스트.
- * <p>
+ * 
  * 테스트 범위:
- * <p>
+ * 
  * - Enum 값 존재 여부
  * - SlotUnit과의 매핑
  * - getMinutes() 메서드 검증

@@ -81,14 +81,14 @@ public class TimeSlotScheduler {
 	/**
 	 * 5분마다 만료된 PENDING 슬롯을 복구한다.
 	 *
-	 * <p>15분 이상 PENDING 상태인 슬롯을 AVAILABLE로 복구한다.
+	 * 15분 이상 PENDING 상태인 슬롯을 AVAILABLE로 복구한다.
 	 *
-	 * <p>Lock 설정:
+	 * Lock 설정:
 	 *
-	 * <ul>
-	 *   <li>lockAtMostFor: 2분 (작업이 2분 이상 걸리면 자동 해제)
-	 *   <li>lockAtLeastFor: 30초 (최소 30초 간격 유지)
-	 * </ul>
+	 * 
+	 *   lockAtMostFor: 2분 (작업이 2분 이상 걸리면 자동 해제)
+	 *   lockAtLeastFor: 30초 (최소 30초 간격 유지)
+	 * 
 	 */
 	@Scheduled(fixedDelay = 300000) // 5분마다
 	@SchedulerLock(
