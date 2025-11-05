@@ -1,5 +1,7 @@
 package com.teambind.springproject.space.entity;
 
+import com.teambind.springproject.common.exceptions.application.InvalidRequestException;
+import com.teambind.springproject.common.exceptions.domain.InvalidSlotStateTransitionException;
 import com.teambind.springproject.space.entity.enums.SlotStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -145,23 +147,21 @@ class RoomTimeSlotTest {
 			RoomTimeSlot slot = RoomTimeSlot.available(101L, LocalDate.now(), LocalTime.of(14, 0));
 			slot.markAsPending(1001L);
 			slot.confirm();
-			
+
 			// When & Then
 			assertThatThrownBy(() -> slot.markAsPending(1002L))
-					.isInstanceOf(IllegalStateException.class)
-					.hasMessageContaining("Slot is not available");
+					.isInstanceOf(InvalidSlotStateTransitionException.class);
 		}
-		
+
 		@Test
 		@DisplayName("[오류] CLOSED 상태의 슬롯은 PENDING으로 전환할 수 없다")
 		void cannotMarkClosedSlotAsPending() {
 			// Given
 			RoomTimeSlot slot = RoomTimeSlot.closed(101L, LocalDate.now(), LocalTime.of(14, 0));
-			
+
 			// When & Then
 			assertThatThrownBy(() -> slot.markAsPending(1001L))
-					.isInstanceOf(IllegalStateException.class)
-					.hasMessageContaining("Slot is not available");
+					.isInstanceOf(InvalidSlotStateTransitionException.class);
 		}
 		
 		@Test
@@ -169,11 +169,11 @@ class RoomTimeSlotTest {
 		void markAsPendingWithNullReservationId() {
 			// Given
 			RoomTimeSlot slot = RoomTimeSlot.available(101L, LocalDate.now(), LocalTime.of(14, 0));
-			
+
 			// When & Then
 			assertThatThrownBy(() -> slot.markAsPending(null))
-					.isInstanceOf(NullPointerException.class)
-					.hasMessageContaining("reservationId must not be null");
+					.isInstanceOf(InvalidRequestException.class)
+					.hasMessageContaining("reservationId");
 		}
 	}
 	
@@ -206,13 +206,12 @@ class RoomTimeSlotTest {
 		void cannotConfirmAvailableSlot() {
 			// Given
 			RoomTimeSlot slot = RoomTimeSlot.available(101L, LocalDate.now(), LocalTime.of(14, 0));
-			
+
 			// When & Then
 			assertThatThrownBy(slot::confirm)
-					.isInstanceOf(IllegalStateException.class)
-					.hasMessageContaining("Slot is not pending");
+					.isInstanceOf(InvalidSlotStateTransitionException.class);
 		}
-		
+
 		@Test
 		@DisplayName("[오류] 이미 RESERVED 상태인 슬롯은 다시 확정할 수 없다")
 		void cannotConfirmReservedSlot() {
@@ -223,8 +222,7 @@ class RoomTimeSlotTest {
 			
 			// When & Then
 			assertThatThrownBy(slot::confirm)
-					.isInstanceOf(IllegalStateException.class)
-					.hasMessageContaining("Slot is not pending");
+					.isInstanceOf(InvalidSlotStateTransitionException.class);
 		}
 	}
 	
@@ -274,8 +272,7 @@ class RoomTimeSlotTest {
 			
 			// When & Then
 			assertThatThrownBy(slot::cancel)
-					.isInstanceOf(IllegalStateException.class)
-					.hasMessageContaining("Cannot cancel slot");
+					.isInstanceOf(InvalidSlotStateTransitionException.class);
 		}
 		
 		@Test
@@ -286,8 +283,7 @@ class RoomTimeSlotTest {
 			
 			// When & Then
 			assertThatThrownBy(slot::cancel)
-					.isInstanceOf(IllegalStateException.class)
-					.hasMessageContaining("Cannot cancel slot");
+					.isInstanceOf(InvalidSlotStateTransitionException.class);
 		}
 	}
 	
@@ -324,8 +320,7 @@ class RoomTimeSlotTest {
 			
 			// When & Then
 			assertThatThrownBy(slot::restore)
-					.isInstanceOf(IllegalStateException.class)
-					.hasMessageContaining("Cannot restore slot");
+					.isInstanceOf(InvalidSlotStateTransitionException.class);
 		}
 		
 		@Test
@@ -338,8 +333,7 @@ class RoomTimeSlotTest {
 			
 			// When & Then
 			assertThatThrownBy(slot::restore)
-					.isInstanceOf(IllegalStateException.class)
-					.hasMessageContaining("Cannot restore slot");
+					.isInstanceOf(InvalidSlotStateTransitionException.class);
 		}
 	}
 	
@@ -425,8 +419,7 @@ class RoomTimeSlotTest {
 			
 			// When & Then: 다른 예약 ID로 시도
 			assertThatThrownBy(() -> slot.markAsPending(1002L))
-					.isInstanceOf(IllegalStateException.class)
-					.hasMessageContaining("Slot is not available");
+					.isInstanceOf(InvalidSlotStateTransitionException.class);
 		}
 	}
 	

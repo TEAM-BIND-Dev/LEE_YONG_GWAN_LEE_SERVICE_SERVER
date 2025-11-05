@@ -1,5 +1,6 @@
 package com.teambind.springproject.space.entity.vo;
 
+import com.teambind.springproject.common.exceptions.application.InvalidRequestException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -156,9 +157,10 @@ class WeeklySlotScheduleTest {
 			// Given
 			WeeklySlotSchedule schedule = WeeklySlotSchedule.of(Collections.emptyList());
 			
-			// When & Then: filter가 null에 대해 NullPointerException을 던짐
+			// When & Then
 			assertThatThrownBy(() -> schedule.getStartTimesFor(null))
-					.isInstanceOf(NullPointerException.class);
+					.isInstanceOf(InvalidRequestException.class)
+					.hasMessageContaining("dayOfWeek");
 		}
 	}
 	
