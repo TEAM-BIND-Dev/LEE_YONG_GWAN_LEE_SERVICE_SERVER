@@ -4,12 +4,12 @@ package com.teambind.springproject.room.entity.enums;
  * 시간 슬롯의 상태를 나타내는 열거형.
  *
  * 슬롯의 생명주기:
- * AVAILABLE → PENDING → RESERVED → (CANCELLED or COMPLETED)
+ * AVAILABLE → PENDING → RESERVED → (Avaliable(취소) or COMPLETED(확정))
  * CLOSED는 초기 생성 시 운영하지 않는 시간대
  */
 public enum SlotStatus {
 	/**
-	 * 예약 가능 상태
+	 * 예약 가능 상태 , 혹은 취소됨
 	 */
 	AVAILABLE,
 	
@@ -23,10 +23,6 @@ public enum SlotStatus {
 	 */
 	RESERVED,
 	
-	/**
-	 * 취소됨
-	 */
-	CANCELLED,
 	
 	/**
 	 * 운영하지 않음 (휴무일)
