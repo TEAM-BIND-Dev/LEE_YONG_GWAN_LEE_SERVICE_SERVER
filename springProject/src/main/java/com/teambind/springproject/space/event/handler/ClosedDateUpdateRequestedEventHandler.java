@@ -1,4 +1,4 @@
-package com.teambind.springproject.space.handler;
+package com.teambind.springproject.space.event.handler;
 
 import com.teambind.springproject.common.exceptions.domain.PolicyNotFoundException;
 import com.teambind.springproject.message.handler.EventHandler;

@@ -1,10 +1,10 @@
 package com.teambind.springproject.space.controller;
 
-import com.teambind.springproject.space.dto.ClosedDateSetupRequest;
-import com.teambind.springproject.space.dto.ClosedDateSetupResponse;
-import com.teambind.springproject.space.dto.RoomOperatingPolicySetupRequest;
-import com.teambind.springproject.space.dto.RoomSetupResponse;
-import com.teambind.springproject.space.dto.SlotGenerationStatusResponse;
+import com.teambind.springproject.space.dto.request.ClosedDateSetupRequest;
+import com.teambind.springproject.space.dto.response.ClosedDateSetupResponse;
+import com.teambind.springproject.space.dto.request.RoomOperatingPolicySetupRequest;
+import com.teambind.springproject.space.dto.response.RoomSetupResponse;
+import com.teambind.springproject.space.dto.response.SlotGenerationStatusResponse;
 import com.teambind.springproject.space.service.ClosedDateSetupApplicationService;
 import com.teambind.springproject.space.service.RoomSetupApplicationService;
 import lombok.RequiredArgsConstructor;

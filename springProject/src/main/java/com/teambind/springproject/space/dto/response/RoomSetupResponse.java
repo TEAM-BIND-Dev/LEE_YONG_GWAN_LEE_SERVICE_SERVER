@@ -1,19 +1,18 @@
-package com.teambind.springproject.space.dto;
+package com.teambind.springproject.space.dto.response;
 
 import com.teambind.springproject.space.entity.enums.GenerationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * 휴무일 설정 응답 DTO.
+ * 룸 초기 설정 응답 DTO.
  */
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-public class ClosedDateSetupResponse {
+public class RoomSetupResponse {
 
 	/**
 	 * 요청 ID
@@ -26,17 +25,22 @@ public class ClosedDateSetupResponse {
 	private Long roomId;
 
 	/**
-	 * 설정된 휴무일 개수
+	 * 시작 날짜
 	 */
-	private Integer closedDateCount;
+	private LocalDate startDate;
 
 	/**
-	 * 처리 상태
+	 * 종료 날짜
+	 */
+	private LocalDate endDate;
+
+	/**
+	 * 요청 상태
 	 */
 	private GenerationStatus status;
 
 	/**
-	 * 요청 시각
+	 * 요청 시간
 	 */
 	private LocalDateTime requestedAt;
 }

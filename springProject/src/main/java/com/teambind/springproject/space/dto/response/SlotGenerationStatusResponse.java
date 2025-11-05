@@ -1,4 +1,4 @@
-package com.teambind.springproject.space.dto;
+package com.teambind.springproject.space.dto.response;
 
 import com.teambind.springproject.space.entity.SlotGenerationRequest;
 import com.teambind.springproject.space.entity.enums.GenerationStatus;

@@ -2,9 +2,9 @@ package com.teambind.springproject.space.service;
 
 import com.teambind.springproject.common.exceptions.domain.RequestNotFoundException;
 import com.teambind.springproject.message.publish.EventPublisher;
-import com.teambind.springproject.space.dto.ClosedDateDto;
-import com.teambind.springproject.space.dto.ClosedDateSetupRequest;
-import com.teambind.springproject.space.dto.ClosedDateSetupResponse;
+import com.teambind.springproject.space.dto.request.ClosedDateDto;
+import com.teambind.springproject.space.dto.request.ClosedDateSetupRequest;
+import com.teambind.springproject.space.dto.response.ClosedDateSetupResponse;
 import com.teambind.springproject.space.entity.ClosedDateUpdateRequest;
 import com.teambind.springproject.space.entity.RoomOperatingPolicy;
 import com.teambind.springproject.space.entity.vo.ClosedDateRange;

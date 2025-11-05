@@ -2,10 +2,10 @@ package com.teambind.springproject.space.service;
 
 import com.teambind.springproject.common.exceptions.domain.RequestNotFoundException;
 import com.teambind.springproject.message.publish.EventPublisher;
-import com.teambind.springproject.space.dto.RoomOperatingPolicySetupRequest;
-import com.teambind.springproject.space.dto.RoomSetupResponse;
-import com.teambind.springproject.space.dto.SlotGenerationStatusResponse;
-import com.teambind.springproject.space.dto.WeeklySlotDto;
+import com.teambind.springproject.space.dto.request.RoomOperatingPolicySetupRequest;
+import com.teambind.springproject.space.dto.response.RoomSetupResponse;
+import com.teambind.springproject.space.dto.response.SlotGenerationStatusResponse;
+import com.teambind.springproject.space.dto.request.WeeklySlotDto;
 import com.teambind.springproject.space.entity.RoomOperatingPolicy;
 import com.teambind.springproject.space.entity.SlotGenerationRequest;
 import com.teambind.springproject.space.entity.enums.RecurrencePattern;

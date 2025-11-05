@@ -1,4 +1,4 @@
-package com.teambind.springproject.space.handler;
+package com.teambind.springproject.space.event.handler;
 
 import com.teambind.springproject.message.handler.EventHandler;
 import com.teambind.springproject.space.entity.SlotGenerationRequest;
