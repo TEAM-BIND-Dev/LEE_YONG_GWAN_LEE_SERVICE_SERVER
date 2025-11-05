@@ -1,8 +1,8 @@
 package com.teambind.springproject.space.mapper;
 
-import com.teambind.springproject.space.dto.response.AvailableSlotResponse;
-import com.teambind.springproject.space.dto.response.SlotAvailabilityResponse;
-import com.teambind.springproject.space.dto.response.TimeSlotResponse;
+import com.teambind.springproject.space.query.dto.AvailableSlotResponse;
+import com.teambind.springproject.space.query.dto.SlotAvailabilityResponse;
+import com.teambind.springproject.space.query.dto.TimeSlotResponse;
 import com.teambind.springproject.space.entity.RoomTimeSlot;
 import org.springframework.stereotype.Component;
 

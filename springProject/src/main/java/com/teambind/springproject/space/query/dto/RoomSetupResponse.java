@@ -1,4 +1,4 @@
-package com.teambind.springproject.space.dto.response;
+package com.teambind.springproject.space.query.dto;
 
 import com.teambind.springproject.space.entity.enums.GenerationStatus;
 import lombok.AllArgsConstructor;

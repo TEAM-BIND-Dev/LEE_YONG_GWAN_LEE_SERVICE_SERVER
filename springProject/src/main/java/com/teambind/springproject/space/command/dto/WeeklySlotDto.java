@@ -1,4 +1,4 @@
-package com.teambind.springproject.space.dto.request;
+package com.teambind.springproject.space.command.dto;
 
 import com.teambind.springproject.space.entity.enums.RecurrencePattern;
 import lombok.AllArgsConstructor;

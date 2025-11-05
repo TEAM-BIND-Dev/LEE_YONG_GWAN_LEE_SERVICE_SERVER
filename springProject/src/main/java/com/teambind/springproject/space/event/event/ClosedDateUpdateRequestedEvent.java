@@ -1,4 +1,4 @@
-package com.teambind.springproject.space.event;
+package com.teambind.springproject.space.event.event;
 
 import com.teambind.springproject.message.event.Event;
 import lombok.AccessLevel;

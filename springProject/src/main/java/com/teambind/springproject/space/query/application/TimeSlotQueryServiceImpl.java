@@ -1,9 +1,9 @@
-package com.teambind.springproject.space.service.impl;
+package com.teambind.springproject.space.query.application;
 
 import com.teambind.springproject.space.entity.RoomTimeSlot;
 import com.teambind.springproject.space.entity.enums.SlotStatus;
 import com.teambind.springproject.space.repository.RoomTimeSlotRepository;
-import com.teambind.springproject.space.service.TimeSlotQueryService;
+import com.teambind.springproject.space.query.application.TimeSlotQueryService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

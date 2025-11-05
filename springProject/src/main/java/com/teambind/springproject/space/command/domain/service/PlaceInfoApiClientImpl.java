@@ -1,8 +1,8 @@
-package com.teambind.springproject.space.service.impl;
+package com.teambind.springproject.space.command.domain.service;
 
 import com.teambind.springproject.common.config.ExternalApiProperties;
 import com.teambind.springproject.space.entity.enums.SlotUnit;
-import com.teambind.springproject.space.service.PlaceInfoApiClient;
+import com.teambind.springproject.space.command.domain.service.PlaceInfoApiClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

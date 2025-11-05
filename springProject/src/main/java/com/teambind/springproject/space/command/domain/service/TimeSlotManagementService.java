@@ -1,4 +1,4 @@
-package com.teambind.springproject.space.service;
+package com.teambind.springproject.space.command.domain.service;
 
 /**
  * 시간 슬롯 상태 관리 서비스.

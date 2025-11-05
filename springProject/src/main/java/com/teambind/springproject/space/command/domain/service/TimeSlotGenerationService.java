@@ -1,4 +1,4 @@
-package com.teambind.springproject.space.service;
+package com.teambind.springproject.space.command.domain.service;
 
 import java.time.LocalDate;
 

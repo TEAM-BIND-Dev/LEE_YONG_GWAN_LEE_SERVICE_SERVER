@@ -1,4 +1,4 @@
-package com.teambind.springproject.space.dto.request;
+package com.teambind.springproject.space.command.dto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

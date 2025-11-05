@@ -1,7 +1,7 @@
 package com.teambind.springproject.space.scheduler;
 
-import com.teambind.springproject.space.service.TimeSlotGenerationService;
-import com.teambind.springproject.space.service.TimeSlotManagementService;
+import com.teambind.springproject.space.command.domain.service.TimeSlotGenerationService;
+import com.teambind.springproject.space.command.domain.service.TimeSlotManagementService;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

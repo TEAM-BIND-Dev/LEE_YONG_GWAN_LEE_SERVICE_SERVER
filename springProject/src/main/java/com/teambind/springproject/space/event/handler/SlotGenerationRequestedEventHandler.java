@@ -2,9 +2,9 @@ package com.teambind.springproject.space.event.handler;
 
 import com.teambind.springproject.message.handler.EventHandler;
 import com.teambind.springproject.space.entity.SlotGenerationRequest;
-import com.teambind.springproject.space.event.SlotGenerationRequestedEvent;
+import com.teambind.springproject.space.event.event.SlotGenerationRequestedEvent;
 import com.teambind.springproject.space.repository.SlotGenerationRequestRepository;
-import com.teambind.springproject.space.service.TimeSlotGenerationService;
+import com.teambind.springproject.space.command.domain.service.TimeSlotGenerationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

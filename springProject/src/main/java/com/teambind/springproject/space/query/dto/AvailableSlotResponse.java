@@ -1,4 +1,4 @@
-package com.teambind.springproject.space.dto.response;
+package com.teambind.springproject.space.query.dto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

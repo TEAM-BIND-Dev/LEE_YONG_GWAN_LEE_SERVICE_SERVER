@@ -1,4 +1,4 @@
-package com.teambind.springproject.space.service;
+package com.teambind.springproject.space.query.application;
 
 import com.teambind.springproject.space.entity.RoomTimeSlot;
 import com.teambind.springproject.space.entity.enums.SlotStatus;

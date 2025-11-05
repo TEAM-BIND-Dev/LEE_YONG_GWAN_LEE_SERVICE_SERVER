@@ -1,4 +1,4 @@
-package com.teambind.springproject.space.service.impl;
+package com.teambind.springproject.space.command.domain.service;
 
 import com.teambind.springproject.common.exceptions.application.SlotGenerationFailedException;
 import com.teambind.springproject.common.exceptions.domain.PolicyNotFoundException;
@@ -7,8 +7,8 @@ import com.teambind.springproject.space.entity.RoomTimeSlot;
 import com.teambind.springproject.space.entity.enums.SlotUnit;
 import com.teambind.springproject.space.repository.RoomOperatingPolicyRepository;
 import com.teambind.springproject.space.repository.RoomTimeSlotRepository;
-import com.teambind.springproject.space.service.PlaceInfoApiClient;
-import com.teambind.springproject.space.service.TimeSlotGenerationService;
+import com.teambind.springproject.space.command.domain.service.PlaceInfoApiClient;
+import com.teambind.springproject.space.command.domain.service.TimeSlotGenerationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

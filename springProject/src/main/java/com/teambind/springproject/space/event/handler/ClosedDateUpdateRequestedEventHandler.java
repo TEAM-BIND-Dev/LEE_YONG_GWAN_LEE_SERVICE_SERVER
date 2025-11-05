@@ -6,7 +6,7 @@ import com.teambind.springproject.space.entity.ClosedDateUpdateRequest;
 import com.teambind.springproject.space.entity.RoomOperatingPolicy;
 import com.teambind.springproject.space.entity.RoomTimeSlot;
 import com.teambind.springproject.space.entity.vo.ClosedDateRange;
-import com.teambind.springproject.space.event.ClosedDateUpdateRequestedEvent;
+import com.teambind.springproject.space.event.event.ClosedDateUpdateRequestedEvent;
 import com.teambind.springproject.space.repository.ClosedDateUpdateRequestRepository;
 import com.teambind.springproject.space.repository.RoomOperatingPolicyRepository;
 import com.teambind.springproject.space.repository.RoomTimeSlotRepository;

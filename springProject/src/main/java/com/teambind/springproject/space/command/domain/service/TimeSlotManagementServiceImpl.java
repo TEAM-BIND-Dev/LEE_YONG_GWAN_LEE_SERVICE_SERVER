@@ -1,4 +1,4 @@
-package com.teambind.springproject.space.service.impl;
+package com.teambind.springproject.space.command.domain.service;
 
 import com.teambind.springproject.common.exceptions.domain.SlotNotFoundException;
 import com.teambind.springproject.space.entity.RoomTimeSlot;
@@ -8,7 +8,7 @@ import com.teambind.springproject.space.event.event.SlotConfirmedEvent;
 import com.teambind.springproject.space.event.event.SlotReservedEvent;
 import com.teambind.springproject.space.event.event.SlotRestoredEvent;
 import com.teambind.springproject.space.repository.RoomTimeSlotRepository;
-import com.teambind.springproject.space.service.TimeSlotManagementService;
+import com.teambind.springproject.space.command.domain.service.TimeSlotManagementService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;

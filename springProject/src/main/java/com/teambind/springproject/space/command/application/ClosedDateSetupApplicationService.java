@@ -1,14 +1,14 @@
-package com.teambind.springproject.space.service;
+package com.teambind.springproject.space.command.application;
 
 import com.teambind.springproject.common.exceptions.domain.RequestNotFoundException;
 import com.teambind.springproject.message.publish.EventPublisher;
-import com.teambind.springproject.space.dto.request.ClosedDateDto;
-import com.teambind.springproject.space.dto.request.ClosedDateSetupRequest;
-import com.teambind.springproject.space.dto.response.ClosedDateSetupResponse;
+import com.teambind.springproject.space.command.dto.ClosedDateDto;
+import com.teambind.springproject.space.command.dto.ClosedDateSetupRequest;
+import com.teambind.springproject.space.query.dto.ClosedDateSetupResponse;
 import com.teambind.springproject.space.entity.ClosedDateUpdateRequest;
 import com.teambind.springproject.space.entity.RoomOperatingPolicy;
 import com.teambind.springproject.space.entity.vo.ClosedDateRange;
-import com.teambind.springproject.space.event.ClosedDateUpdateRequestedEvent;
+import com.teambind.springproject.space.event.event.ClosedDateUpdateRequestedEvent;
 import com.teambind.springproject.space.repository.ClosedDateUpdateRequestRepository;
 import com.teambind.springproject.space.repository.RoomOperatingPolicyRepository;
 import lombok.RequiredArgsConstructor;
