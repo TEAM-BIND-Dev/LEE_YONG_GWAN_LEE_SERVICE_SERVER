@@ -1,5 +1,6 @@
 package com.teambind.springproject.space.entity;
 
+import com.teambind.springproject.common.exceptions.application.InvalidRequestException;
 import com.teambind.springproject.space.entity.enums.RecurrencePattern;
 import com.teambind.springproject.space.entity.enums.SlotStatus;
 import com.teambind.springproject.space.entity.enums.SlotUnit;
@@ -466,11 +467,11 @@ class RoomOperatingPolicyTest {
 		void cannotUpdateWithNullSchedule() {
 			// Given
 			RoomOperatingPolicy policy = createBasicPolicy(RecurrencePattern.EVERY_WEEK);
-			
+
 			// When & Then
 			assertThatThrownBy(() -> policy.updateWeeklySchedule(null))
-					.isInstanceOf(NullPointerException.class)
-					.hasMessageContaining("weeklySchedule must not be null");
+					.isInstanceOf(InvalidRequestException.class)
+					.hasMessageContaining("weeklySchedule");
 		}
 		
 		@Test
@@ -481,8 +482,8 @@ class RoomOperatingPolicyTest {
 			
 			// When & Then
 			assertThatThrownBy(() -> policy.updateRecurrence(null))
-					.isInstanceOf(NullPointerException.class)
-					.hasMessageContaining("recurrence must not be null");
+					.isInstanceOf(InvalidRequestException.class)
+					.hasMessageContaining("recurrence");
 		}
 	}
 }

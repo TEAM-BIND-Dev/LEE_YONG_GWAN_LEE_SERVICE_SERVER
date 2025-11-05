@@ -1,5 +1,6 @@
 package com.teambind.springproject.space.entity;
 
+import com.teambind.springproject.common.exceptions.application.InvalidRequestException;
 import com.teambind.springproject.space.entity.enums.RecurrencePattern;
 import com.teambind.springproject.space.entity.enums.SlotUnit;
 import com.teambind.springproject.space.entity.vo.ClosedDateRange;
@@ -182,10 +183,13 @@ public class RoomOperatingPolicy {
 	 * 주간 스케줄을 업데이트한다.
 	 *
 	 * @param newSchedule 새로운 주간 스케줄
+	 * @throws InvalidRequestException newSchedule이 null인 경우
 	 */
 	public void updateWeeklySchedule(WeeklySlotSchedule newSchedule) {
-		this.weeklySchedule =
-				Objects.requireNonNull(newSchedule, "weeklySchedule must not be null");
+		if (newSchedule == null) {
+			throw InvalidRequestException.requiredFieldMissing("weeklySchedule");
+		}
+		this.weeklySchedule = newSchedule;
 		this.updatedAt = LocalDateTime.now();
 	}
 	
@@ -193,9 +197,13 @@ public class RoomOperatingPolicy {
 	 * 반복 패턴을 업데이트한다.
 	 *
 	 * @param newRecurrence 새로운 반복 패턴
+	 * @throws InvalidRequestException newRecurrence가 null인 경우
 	 */
 	public void updateRecurrence(RecurrencePattern newRecurrence) {
-		this.recurrence = Objects.requireNonNull(newRecurrence, "recurrence must not be null");
+		if (newRecurrence == null) {
+			throw InvalidRequestException.requiredFieldMissing("recurrence");
+		}
+		this.recurrence = newRecurrence;
 		this.updatedAt = LocalDateTime.now();
 	}
 	
@@ -203,9 +211,12 @@ public class RoomOperatingPolicy {
 	 * 휴무일을 추가한다.
 	 *
 	 * @param closedDateRange 추가할 휴무일 범위
+	 * @throws InvalidRequestException closedDateRange가 null인 경우
 	 */
 	public void addClosedDate(ClosedDateRange closedDateRange) {
-		Objects.requireNonNull(closedDateRange, "closedDateRange must not be null");
+		if (closedDateRange == null) {
+			throw InvalidRequestException.requiredFieldMissing("closedDateRange");
+		}
 		this.closedDates.add(closedDateRange);
 		this.updatedAt = LocalDateTime.now();
 	}
@@ -224,9 +235,12 @@ public class RoomOperatingPolicy {
 	 * 모든 휴무일을 새로운 목록으로 교체한다.
 	 *
 	 * @param newClosedDates 새로운 휴무일 목록
+	 * @throws InvalidRequestException newClosedDates가 null인 경우
 	 */
 	public void updateClosedDates(List<ClosedDateRange> newClosedDates) {
-		Objects.requireNonNull(newClosedDates, "closedDates must not be null");
+		if (newClosedDates == null) {
+			throw InvalidRequestException.requiredFieldMissing("closedDates");
+		}
 		this.closedDates = new ArrayList<>(newClosedDates);
 		this.updatedAt = LocalDateTime.now();
 	}

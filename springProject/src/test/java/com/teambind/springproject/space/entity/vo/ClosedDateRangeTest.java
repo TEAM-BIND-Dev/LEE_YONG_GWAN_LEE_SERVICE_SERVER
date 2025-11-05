@@ -1,5 +1,6 @@
 package com.teambind.springproject.space.entity.vo;
 
+import com.teambind.springproject.common.exceptions.application.InvalidTimeRangeException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -98,11 +99,12 @@ class ClosedDateRangeTest {
 			// Given
 			LocalDate start = LocalDate.of(2025, 1, 29);
 			LocalDate end = LocalDate.of(2025, 1, 27); // start보다 이전
-			
+
 			// When & Then
 			assertThatThrownBy(() -> ClosedDateRange.ofDateRange(start, end))
-					.isInstanceOf(IllegalArgumentException.class)
-					.hasMessageContaining("endDate must not be before startDate");
+					.isInstanceOf(InvalidTimeRangeException.class)
+					.hasMessageContaining("2025-01-29")
+					.hasMessageContaining("2025-01-27");
 		}
 		
 		@Test
@@ -115,8 +117,9 @@ class ClosedDateRangeTest {
 			
 			// When & Then
 			assertThatThrownBy(() -> ClosedDateRange.ofTimeRange(date, start, end))
-					.isInstanceOf(IllegalArgumentException.class)
-					.hasMessageContaining("endTime must not be before startTime");
+					.isInstanceOf(InvalidTimeRangeException.class)
+					.hasMessageContaining("13:00")
+					.hasMessageContaining("12:00");
 		}
 	}
 	

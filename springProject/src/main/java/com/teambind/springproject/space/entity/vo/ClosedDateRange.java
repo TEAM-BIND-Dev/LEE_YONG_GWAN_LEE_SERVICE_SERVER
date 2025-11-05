@@ -1,5 +1,6 @@
 package com.teambind.springproject.space.entity.vo;
 
+import com.teambind.springproject.common.exceptions.application.InvalidTimeRangeException;
 import jakarta.persistence.Embeddable;
 
 import java.time.LocalDate;
@@ -40,11 +41,13 @@ public class ClosedDateRange {
 		this.endTime = endTime; // nullable
 		
 		if (endDate != null && endDate.isBefore(startDate)) {
-			throw new IllegalArgumentException("endDate must not be before startDate");
+			throw InvalidTimeRangeException.endDateBeforeStartDate(
+					startDate.toString(), endDate.toString());
 		}
-		
+
 		if (startTime != null && endTime != null && endTime.isBefore(startTime)) {
-			throw new IllegalArgumentException("endTime must not be before startTime");
+			throw InvalidTimeRangeException.endBeforeStart(
+					startTime.toString(), endTime.toString());
 		}
 	}
 	

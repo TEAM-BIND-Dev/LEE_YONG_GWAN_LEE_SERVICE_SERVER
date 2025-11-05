@@ -1,5 +1,7 @@
 package com.teambind.springproject.space.entity;
 
+import com.teambind.springproject.common.exceptions.application.InvalidRequestException;
+import com.teambind.springproject.common.exceptions.domain.InvalidSlotStateTransitionException;
 import com.teambind.springproject.space.entity.enums.SlotStatus;
 import jakarta.persistence.*;
 
@@ -101,27 +103,31 @@ public class RoomTimeSlot {
 	 * 슬롯을 예약 대기 상태로 전환한다.
 	 *
 	 * @param reservationId 예약 ID
-	 * @throws IllegalStateException 슬롯이 AVAILABLE 상태가 아닌 경우
+	 * @throws InvalidSlotStateTransitionException 슬롯이 AVAILABLE 상태가 아닌 경우
+	 * @throws InvalidRequestException reservationId가 null인 경우
 	 */
 	public void markAsPending(Long reservationId) {
 		if (status != SlotStatus.AVAILABLE) {
-			throw new IllegalStateException(
-					String.format("Slot is not available. Current status: %s", status));
+			throw new InvalidSlotStateTransitionException(
+					status.name(), SlotStatus.PENDING.name());
+		}
+		if (reservationId == null) {
+			throw InvalidRequestException.requiredFieldMissing("reservationId");
 		}
 		this.status = SlotStatus.PENDING;
-		this.reservationId = Objects.requireNonNull(reservationId, "reservationId must not be null");
+		this.reservationId = reservationId;
 		this.lastUpdated = LocalDateTime.now();
 	}
 	
 	/**
 	 * 슬롯을 예약 확정 상태로 전환한다.
 	 *
-	 * @throws IllegalStateException 슬롯이 PENDING 상태가 아닌 경우
+	 * @throws InvalidSlotStateTransitionException 슬롯이 PENDING 상태가 아닌 경우
 	 */
 	public void confirm() {
 		if (status != SlotStatus.PENDING) {
-			throw new IllegalStateException(
-					String.format("Slot is not pending. Current status: %s", status));
+			throw new InvalidSlotStateTransitionException(
+					status.name(), SlotStatus.RESERVED.name());
 		}
 		this.status = SlotStatus.RESERVED;
 		this.lastUpdated = LocalDateTime.now();
@@ -130,13 +136,13 @@ public class RoomTimeSlot {
 	/**
 	 * 예약을 취소하고 슬롯을 다시 예약 가능 상태로 전환한다.
 	 *
-	 * @throws IllegalStateException 슬롯이 PENDING 또는 RESERVED 상태가 아닌 경우
+	 * @throws InvalidSlotStateTransitionException 슬롯이 PENDING 또는 RESERVED 상태가 아닌 경우
 	 */
 	public void cancel() {
 		if (status != SlotStatus.PENDING && status != SlotStatus.RESERVED) {
-			throw new IllegalStateException(
-					String.format(
-							"Cannot cancel slot. Current status: %s (expected PENDING or RESERVED)", status));
+			throw new InvalidSlotStateTransitionException(
+					String.format("슬롯을 취소할 수 없습니다. 현재 상태: %s (PENDING 또는 RESERVED 상태여야 함)",
+							status.name()));
 		}
 		this.status = SlotStatus.CANCELLED;
 		this.lastUpdated = LocalDateTime.now();
@@ -145,12 +151,12 @@ public class RoomTimeSlot {
 	/**
 	 * 취소된 슬롯을 다시 예약 가능 상태로 복구한다.
 	 *
-	 * @throws IllegalStateException 슬롯이 CANCELLED 상태가 아닌 경우
+	 * @throws InvalidSlotStateTransitionException 슬롯이 CANCELLED 상태가 아닌 경우
 	 */
 	public void restore() {
 		if (status != SlotStatus.CANCELLED) {
-			throw new IllegalStateException(
-					String.format("Cannot restore slot. Current status: %s (expected CANCELLED)", status));
+			throw new InvalidSlotStateTransitionException(
+					status.name(), SlotStatus.AVAILABLE.name());
 		}
 		this.status = SlotStatus.AVAILABLE;
 		this.reservationId = null;
