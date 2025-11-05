@@ -12,20 +12,20 @@ import java.time.LocalDate;
 
 /**
  * 시간 슬롯 관리 스케줄러.
- *
+ * <p>
  * 주요 책임:
- *
- *
- *   매일 Rolling Window 유지 (어제 슬롯 삭제, 60일 후 슬롯 생성)
- *   만료된 PENDING 슬롯 복구
- *
- *
+ * <p>
+ * <p>
+ * 매일 Rolling Window 유지 (어제 슬롯 삭제, 60일 후 슬롯 생성)
+ * 만료된 PENDING 슬롯 복구
+ * <p>
+ * <p>
  * 분산 환경 고려:
- *
- *
- *   ShedLock을 사용하여 중복 실행 방지
- *   lockAtMostFor: 작업 실패 시 자동 Lock 해제
- *   lockAtLeastFor: 최소 실행 간격 보장
+ * <p>
+ * <p>
+ * ShedLock을 사용하여 중복 실행 방지
+ * lockAtMostFor: 작업 실패 시 자동 Lock 해제
+ * lockAtLeastFor: 최소 실행 간격 보장
  *
  */
 @Component
@@ -45,11 +45,11 @@ public class TimeSlotScheduler {
 	/**
 	 * 매일 새벽 2시에 Rolling Window를 유지한다.
 	 * 처리 플로우:
-	 *   어제 날짜의 슬롯 삭제
-	 *   60일 후 날짜의 슬롯 생성
+	 * 어제 날짜의 슬롯 삭제
+	 * 60일 후 날짜의 슬롯 생성
 	 * Lock 설정:
-	 *   lockAtMostFor: 5분 (작업이 5분 이상 걸리면 자동 해제)
-	 *  lockAtLeastFor: 1분 (최소 1분 간격 유지)
+	 * lockAtMostFor: 5분 (작업이 5분 이상 걸리면 자동 해제)
+	 * lockAtLeastFor: 1분 (최소 1분 간격 유지)
 	 *
 	 */
 	@Scheduled(cron = "0 0 2 * * *") // 매일 새벽 2시
@@ -80,15 +80,15 @@ public class TimeSlotScheduler {
 	
 	/**
 	 * 5분마다 만료된 PENDING 슬롯을 복구한다.
-	 *
+	 * <p>
 	 * 15분 이상 PENDING 상태인 슬롯을 AVAILABLE로 복구한다.
-	 *
+	 * <p>
 	 * Lock 설정:
+	 * <p>
+	 * <p>
+	 * lockAtMostFor: 2분 (작업이 2분 이상 걸리면 자동 해제)
+	 * lockAtLeastFor: 30초 (최소 30초 간격 유지)
 	 *
-	 * 
-	 *   lockAtMostFor: 2분 (작업이 2분 이상 걸리면 자동 해제)
-	 *   lockAtLeastFor: 30초 (최소 30초 간격 유지)
-	 * 
 	 */
 	@Scheduled(fixedDelay = 300000) // 5분마다
 	@SchedulerLock(

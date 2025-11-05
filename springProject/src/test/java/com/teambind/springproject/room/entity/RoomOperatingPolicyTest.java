@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 /**
  * RoomOperatingPolicy 엔티티 단위 테스트.
  * 테스트 범위:
- * 
+ * <p>
  * 정책 생성 및 검증
  * 슬롯 생성 여부 판단 (반복 패턴, 휴무일)
  * 슬롯 생성 로직
@@ -467,7 +467,7 @@ class RoomOperatingPolicyTest {
 		void cannotUpdateWithNullSchedule() {
 			// Given
 			RoomOperatingPolicy policy = createBasicPolicy(RecurrencePattern.EVERY_WEEK);
-
+			
 			// When & Then
 			assertThatThrownBy(() -> policy.updateWeeklySchedule(null))
 					.isInstanceOf(InvalidRequestException.class)

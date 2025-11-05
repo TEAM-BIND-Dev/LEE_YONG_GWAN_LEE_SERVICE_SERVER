@@ -1,10 +1,10 @@
 package com.teambind.springproject.room.mapper;
 
+import com.teambind.springproject.room.entity.RoomTimeSlot;
+import com.teambind.springproject.room.entity.enums.SlotStatus;
 import com.teambind.springproject.room.query.dto.AvailableSlotResponse;
 import com.teambind.springproject.room.query.dto.SlotAvailabilityResponse;
 import com.teambind.springproject.room.query.dto.TimeSlotResponse;
-import com.teambind.springproject.room.entity.RoomTimeSlot;
-import com.teambind.springproject.room.entity.enums.SlotStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

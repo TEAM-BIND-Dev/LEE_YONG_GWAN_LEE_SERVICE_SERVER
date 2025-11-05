@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 
 /**
  * 주간 운영 시간 스케줄을 나타내는 Value Object.
- *
- *  요일별 슬롯 시작 시각 목록을 관리하며, 특정 요일의 시작 시각을 조회하는 기능을 제공한다.
+ * <p>
+ * 요일별 슬롯 시작 시각 목록을 관리하며, 특정 요일의 시작 시각을 조회하는 기능을 제공한다.
  */
 @Embeddable
 public class WeeklySlotSchedule {
@@ -47,7 +47,7 @@ public class WeeklySlotSchedule {
 	
 	/**
 	 * 특정 요일의 슬롯 시작 시각 목록을 반환한다.
-	 *
+	 * <p>
 	 * 반환된 목록은 시간순으로 정렬되며, 중복이 제거되고, 수정 불가능한 리스트이다.
 	 *
 	 * @param dayOfWeek 조회할 요일
@@ -80,10 +80,9 @@ public class WeeklySlotSchedule {
 		if (this == o) {
 			return true;
 		}
-		if (!(o instanceof WeeklySlotSchedule)) {
+		if (!(o instanceof WeeklySlotSchedule that)) {
 			return false;
 		}
-		WeeklySlotSchedule that = (WeeklySlotSchedule) o;
 		return Objects.equals(slotTimes, that.slotTimes);
 	}
 	

@@ -16,9 +16,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * WeeklySlotSchedule Value Object 단위 테스트.
- * 
+ * <p>
  * 테스트 범위:
- * 
+ * <p>
  * - 주간 슬롯 스케줄 생성
  * - 요일별 시작 시각 조회 (getStartTimesFor)
  * - 빈 스케줄 처리
@@ -116,7 +116,7 @@ class WeeklySlotScheduleTest {
 		@DisplayName("[정상] 스케줄이 없는 요일은 빈 리스트를 반환한다")
 		void returnEmptyListForDayWithoutSchedule() {
 			// Given
-			List<WeeklySlotTime> slots = Arrays.asList(
+			List<WeeklySlotTime> slots = List.of(
 					WeeklySlotTime.of(DayOfWeek.MONDAY, LocalTime.of(9, 0))
 			);
 			WeeklySlotSchedule schedule = WeeklySlotSchedule.of(slots);
@@ -176,7 +176,7 @@ class WeeklySlotScheduleTest {
 		@DisplayName("[정상] 반환된 리스트를 수정해도 원본에 영향을 주지 않는다")
 		void modifyingReturnedListDoesNotAffectOriginal() {
 			// Given
-			List<WeeklySlotTime> slots = Arrays.asList(
+			List<WeeklySlotTime> slots = List.of(
 					WeeklySlotTime.of(DayOfWeek.MONDAY, LocalTime.of(9, 0))
 			);
 			WeeklySlotSchedule schedule = WeeklySlotSchedule.of(slots);
@@ -226,10 +226,10 @@ class WeeklySlotScheduleTest {
 		@DisplayName("[정상] 다른 슬롯 리스트는 동등하지 않다")
 		void differentSlotsAreNotEqual() {
 			// Given
-			List<WeeklySlotTime> slots1 = Arrays.asList(
+			List<WeeklySlotTime> slots1 = List.of(
 					WeeklySlotTime.of(DayOfWeek.MONDAY, LocalTime.of(9, 0))
 			);
-			List<WeeklySlotTime> slots2 = Arrays.asList(
+			List<WeeklySlotTime> slots2 = List.of(
 					WeeklySlotTime.of(DayOfWeek.TUESDAY, LocalTime.of(9, 0))
 			);
 			

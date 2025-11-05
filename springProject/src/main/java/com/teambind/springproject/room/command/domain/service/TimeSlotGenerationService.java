@@ -4,13 +4,13 @@ import java.time.LocalDate;
 
 /**
  * 시간 슬롯 생성 서비스.
- *
+ * <p>
  * 주요 책임:
- *
- *
- *   정책 기반 슬롯 배치 생성
- *   Rolling Window 유지 (매일 배치)
- *   SlotUnit 조회 및 슬롯 생성 로직
+ * <p>
+ * <p>
+ * 정책 기반 슬롯 배치 생성
+ * Rolling Window 유지 (매일 배치)
+ * SlotUnit 조회 및 슬롯 생성 로직
  *
  */
 
@@ -18,15 +18,14 @@ public interface TimeSlotGenerationService {
 	
 	/**
 	 * 특정 룸의 특정 날짜에 대한 슬롯을 생성한다.
-	 *
+	 * <p>
 	 * 처리 플로우:
-	 *
-	 *
-	 *   RoomOperatingPolicy 조회
-	 *   Place Info API에서 SlotUnit 조회
-	 *   정책 기반으로 슬롯 생성 (Policy.generateSlotsFor 호출)
-	 *   DB에 배치 저장
-	 *
+	 * <p>
+	 * <p>
+	 * RoomOperatingPolicy 조회
+	 * Place Info API에서 SlotUnit 조회
+	 * 정책 기반으로 슬롯 생성 (Policy.generateSlotsFor 호출)
+	 * DB에 배치 저장
 	 *
 	 * @param roomId 룸 ID
 	 * @param date   슬롯을 생성할 날짜
@@ -46,7 +45,7 @@ public interface TimeSlotGenerationService {
 	
 	/**
 	 * 모든 룸의 특정 날짜에 대한 슬롯을 생성한다.
-	 *
+	 * <p>
 	 * 매일 배치 작업에서 호출된다.
 	 *
 	 * @param date 슬롯을 생성할 날짜
@@ -56,7 +55,7 @@ public interface TimeSlotGenerationService {
 	
 	/**
 	 * 어제 날짜의 슬롯을 삭제한다.
-	 *
+	 * <p>
 	 * Rolling Window 유지를 위해 매일 배치 작업에서 호출된다.
 	 *
 	 * @return 삭제된 슬롯 개수
@@ -73,7 +72,7 @@ public interface TimeSlotGenerationService {
 	
 	/**
 	 * 특정 룸의 미래 슬롯을 재생성한다.
-	 *
+	 * <p>
 	 * 정책 변경 시 호출된다.
 	 *
 	 * @param roomId 룸 ID

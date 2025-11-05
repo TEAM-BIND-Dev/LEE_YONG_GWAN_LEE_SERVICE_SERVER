@@ -14,57 +14,57 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 public class SlotGenerationStatusResponse {
-
+	
 	/**
 	 * 요청 ID
 	 */
 	private String requestId;
-
+	
 	/**
 	 * 룸 ID
 	 */
 	private Long roomId;
-
+	
 	/**
 	 * 시작 날짜
 	 */
 	private LocalDate startDate;
-
+	
 	/**
 	 * 종료 날짜
 	 */
 	private LocalDate endDate;
-
+	
 	/**
 	 * 요청 상태
 	 */
 	private GenerationStatus status;
-
+	
 	/**
 	 * 생성된 슬롯 개수
 	 */
 	private Integer totalSlots;
-
+	
 	/**
 	 * 요청 시간
 	 */
 	private LocalDateTime requestedAt;
-
+	
 	/**
 	 * 시작 시간
 	 */
 	private LocalDateTime startedAt;
-
+	
 	/**
 	 * 완료 시간
 	 */
 	private LocalDateTime completedAt;
-
+	
 	/**
 	 * 에러 메시지
 	 */
 	private String errorMessage;
-
+	
 	/**
 	 * Entity로부터 DTO를 생성한다.
 	 *

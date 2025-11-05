@@ -12,10 +12,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * RecurrencePattern Enum 단위 테스트.
- * 
+ * <p>
  * 테스트 범위:
- * 
- * 
+ * <p>
+ * <p>
  * 매주 패턴 (EVERY_WEEK)
  * 홀수주 패턴 (ODD_WEEK)
  * 짝수주 패턴 (EVEN_WEEK)

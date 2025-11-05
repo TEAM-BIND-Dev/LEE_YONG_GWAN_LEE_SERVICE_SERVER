@@ -3,7 +3,6 @@ package com.teambind.springproject.room.query.application;
 import com.teambind.springproject.room.entity.RoomTimeSlot;
 import com.teambind.springproject.room.entity.enums.SlotStatus;
 import com.teambind.springproject.room.repository.RoomTimeSlotRepository;
-import com.teambind.springproject.room.query.application.TimeSlotQueryService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

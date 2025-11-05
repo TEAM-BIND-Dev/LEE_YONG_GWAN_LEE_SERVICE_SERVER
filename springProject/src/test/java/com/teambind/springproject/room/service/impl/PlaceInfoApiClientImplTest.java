@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * PlaceInfoApiClientImpl 테스트.
- *
+ * <p>
  * 현재는 Mock 구현이므로 기본 동작만 검증한다.
  * 실제 API 연동 시 통합 테스트로 전환 필요.
  */

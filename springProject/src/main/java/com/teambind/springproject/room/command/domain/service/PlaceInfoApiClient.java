@@ -4,12 +4,12 @@ import com.teambind.springproject.room.entity.enums.SlotUnit;
 
 /**
  * Place Info Service와 통신하는 API 클라이언트.
- *
+ * <p>
  * 주요 책임:
- *
- *
- *   Room의 SlotUnit 조회
- *   외부 서비스 장애 대응 (Fallback, Circuit Breaker)
+ * <p>
+ * <p>
+ * Room의 SlotUnit 조회
+ * 외부 서비스 장애 대응 (Fallback, Circuit Breaker)
  *
  */
 
@@ -17,7 +17,7 @@ public interface PlaceInfoApiClient {
 	
 	/**
 	 * Room ID로 SlotUnit을 조회한다.
-	 *
+	 * <p>
 	 * API 호출 실패 시 기본값(HALF_HOUR)을 반환한다.
 	 *
 	 * @param roomId 룸 ID

@@ -3,13 +3,13 @@ package com.teambind.springproject.room.service.integration;
 import com.teambind.springproject.common.exceptions.domain.SlotNotFoundException;
 import com.teambind.springproject.config.TestKafkaConfig;
 import com.teambind.springproject.config.TestRedisConfig;
+import com.teambind.springproject.room.command.domain.service.TimeSlotManagementService;
 import com.teambind.springproject.room.entity.RoomTimeSlot;
 import com.teambind.springproject.room.entity.enums.SlotStatus;
 import com.teambind.springproject.room.event.event.SlotCancelledEvent;
 import com.teambind.springproject.room.event.event.SlotConfirmedEvent;
 import com.teambind.springproject.room.event.event.SlotReservedEvent;
 import com.teambind.springproject.room.repository.RoomTimeSlotRepository;
-import com.teambind.springproject.room.command.domain.service.TimeSlotManagementService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * TimeSlotManagementService 통합 테스트.
- * 
+ * <p>
  * 실제 H2 데이터베이스와 Repository를 사용하여 슬롯 상태 관리 기능을 검증한다.
  */
 @Slf4j

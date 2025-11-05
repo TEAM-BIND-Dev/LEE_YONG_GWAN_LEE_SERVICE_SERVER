@@ -10,8 +10,8 @@ import java.util.Objects;
 
 /**
  * 특정 요일의 슬롯 시작 시각을 나타내는 Value Object.
- *
- *  불변 객체로 설계되어 thread-safe하며, equals/hashCode는 모든 필드 기반으로 판단한다.
+ * <p>
+ * 불변 객체로 설계되어 thread-safe하며, equals/hashCode는 모든 필드 기반으로 판단한다.
  */
 @Embeddable
 public class WeeklySlotTime {
@@ -55,10 +55,9 @@ public class WeeklySlotTime {
 		if (this == o) {
 			return true;
 		}
-		if (!(o instanceof WeeklySlotTime)) {
+		if (!(o instanceof WeeklySlotTime that)) {
 			return false;
 		}
-		WeeklySlotTime that = (WeeklySlotTime) o;
 		return dayOfWeek == that.dayOfWeek && Objects.equals(startTime, that.startTime);
 	}
 	

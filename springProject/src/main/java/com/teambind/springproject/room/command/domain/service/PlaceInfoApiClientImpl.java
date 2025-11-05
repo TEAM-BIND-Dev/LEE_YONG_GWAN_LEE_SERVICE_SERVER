@@ -2,14 +2,13 @@ package com.teambind.springproject.room.command.domain.service;
 
 import com.teambind.springproject.common.config.ExternalApiProperties;
 import com.teambind.springproject.room.entity.enums.SlotUnit;
-import com.teambind.springproject.room.command.domain.service.PlaceInfoApiClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
  * Place Info API 클라이언트 구현체.
- * 
+ * <p>
  * 현재는 Mock 구현으로, 실제 API 연동 시 변경 필요.
  */
 @Service

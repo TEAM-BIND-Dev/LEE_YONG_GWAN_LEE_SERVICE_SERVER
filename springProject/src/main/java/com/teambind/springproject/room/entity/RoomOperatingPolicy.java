@@ -19,16 +19,16 @@ import java.util.stream.Collectors;
 
 /**
  * 룸의 운영 시간 정책을 나타내는 Aggregate Root.
- *
+ * <p>
  * 이 엔티티는 다음 책임을 가진다:
+ * <p>
+ * <p>
+ * 요일별 운영 시간 슬롯 관리
+ * 반복 패턴 관리 (매주, 홀수주, 짝수주)
+ * 휴무일 예외 관리
+ * 특정 날짜에 슬롯 생성 여부 판단
+ * 정책 기반 시간 슬롯 생성
  *
- * 
- *   요일별 운영 시간 슬롯 관리
- *   반복 패턴 관리 (매주, 홀수주, 짝수주)
- *   휴무일 예외 관리
- *   특정 날짜에 슬롯 생성 여부 판단
- *   정책 기반 시간 슬롯 생성
- * 
  */
 @Entity
 @Table(name = "room_operating_policies")
@@ -95,13 +95,12 @@ public class RoomOperatingPolicy {
 	
 	/**
 	 * 특정 날짜에 슬롯을 생성해야 하는지 판단한다.
-	 *
+	 * <p>
 	 * 다음 조건을 모두 만족해야 슬롯을 생성한다:
-	 *
-	 *
-	 *   반복 패턴과 일치
-	 *   휴무일이 아님
-	 *
+	 * <p>
+	 * <p>
+	 * 반복 패턴과 일치
+	 * 휴무일이 아님
 	 *
 	 * @param date 확인할 날짜
 	 * @return 슬롯 생성이 필요하면 true, 아니면 false
@@ -141,15 +140,14 @@ public class RoomOperatingPolicy {
 	
 	/**
 	 * 특정 날짜에 대한 시간 슬롯을 생성한다.
-	 *
-	 *
+	 * <p>
+	 * <p>
 	 * 생성 로직:
-	 *
-	 *   해당 날짜의 요일을 확인
-	 *   요일별 시작 시각 목록 조회
-	 *   각 시작 시각에서 SlotUnit 간격으로 슬롯 생성
-	 *   휴무 시간은 CLOSED 상태로 생성
-	 *
+	 * <p>
+	 * 해당 날짜의 요일을 확인
+	 * 요일별 시작 시각 목록 조회
+	 * 각 시작 시각에서 SlotUnit 간격으로 슬롯 생성
+	 * 휴무 시간은 CLOSED 상태로 생성
 	 *
 	 * @param date     슬롯을 생성할 날짜
 	 * @param slotUnit 슬롯 단위 (HOUR 또는 HALF_HOUR)
@@ -279,10 +277,9 @@ public class RoomOperatingPolicy {
 		if (this == o) {
 			return true;
 		}
-		if (!(o instanceof RoomOperatingPolicy)) {
+		if (!(o instanceof RoomOperatingPolicy that)) {
 			return false;
 		}
-		RoomOperatingPolicy that = (RoomOperatingPolicy) o;
 		return Objects.equals(policyId, that.policyId);
 	}
 	

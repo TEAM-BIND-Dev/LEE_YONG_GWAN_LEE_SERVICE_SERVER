@@ -6,18 +6,18 @@ import java.util.Optional;
 
 /**
  * 슬롯 생성 요청 영속성 포트.
- *
+ * <p>
  * Hexagonal Architecture의 Port 인터페이스로, 도메인 계층이 인프라 계층에 의존하지 않도록
  * 추상화를 제공한다.
- *
+ * <p>
  * SOLID 원칙:
- * 
- *   DIP (Dependency Inversion Principle): 도메인이 구체적인 JPA 구현체가 아닌 이 인터페이스에 의존
- *   ISP (Interface Segregation Principle): 도메인에 필요한 메서드만 정의
- * 
+ * <p>
+ * DIP (Dependency Inversion Principle): 도메인이 구체적인 JPA 구현체가 아닌 이 인터페이스에 의존
+ * ISP (Interface Segregation Principle): 도메인에 필요한 메서드만 정의
+ *
  */
 public interface SlotGenerationRequestPort {
-
+	
 	/**
 	 * Request ID로 슬롯 생성 요청을 조회한다.
 	 *
@@ -25,7 +25,7 @@ public interface SlotGenerationRequestPort {
 	 * @return 요청이 존재하면 Optional에 담아 반환, 없으면 빈 Optional
 	 */
 	Optional<SlotGenerationRequest> findById(String requestId);
-
+	
 	/**
 	 * 슬롯 생성 요청을 저장한다.
 	 *

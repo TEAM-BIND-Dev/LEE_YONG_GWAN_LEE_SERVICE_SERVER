@@ -15,14 +15,14 @@ import java.util.Optional;
 
 /**
  * RoomTimeSlot에 대한 데이터 접근 계층.
- *
+ * <p>
  * 주요 책임:
+ * <p>
+ * <p>
+ * 슬롯 조회 (Room, 날짜, 시간, 상태별)
+ * 슬롯 배치 생성/삭제
+ * Rolling Window 유지 (어제 슬롯 삭제)
  *
- *
- *   슬롯 조회 (Room, 날짜, 시간, 상태별)
- *   슬롯 배치 생성/삭제
- *   Rolling Window 유지 (어제 슬롯 삭제)
- * 
  */
 @Repository
 public interface RoomTimeSlotRepository extends JpaRepository<RoomTimeSlot, Long> {
@@ -59,7 +59,7 @@ public interface RoomTimeSlotRepository extends JpaRepository<RoomTimeSlot, Long
 	 */
 	List<RoomTimeSlot> findByRoomIdAndSlotDateAndStatus(
 			Long roomId, LocalDate slotDate, SlotStatus status);
-
+	
 	/**
 	 * Reservation ID로 슬롯 목록을 조회한다.
 	 *
@@ -115,11 +115,11 @@ public interface RoomTimeSlotRepository extends JpaRepository<RoomTimeSlot, Long
 			@Param("startDate") LocalDate startDate,
 			@Param("endDate") LocalDate endDate,
 			@Param("status") SlotStatus status);
-
+	
 	/**
 	 * 만료된 PENDING 슬롯을 조회한다.
 	 *
-	 * @param status          슬롯 상태 (PENDING)
+	 * @param status         슬롯 상태 (PENDING)
 	 * @param expirationTime 만료 시간
 	 * @return 만료된 슬롯 목록
 	 */

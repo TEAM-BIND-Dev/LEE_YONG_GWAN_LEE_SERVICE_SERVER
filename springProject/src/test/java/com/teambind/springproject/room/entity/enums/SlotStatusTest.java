@@ -9,9 +9,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * SlotStatus Enum 단위 테스트.
- * 
+ * <p>
  * 테스트 범위:
- * 
+ * <p>
  * - Enum 값 존재 여부
  * - valueOf() 변환
  * - 상태별 의미 검증

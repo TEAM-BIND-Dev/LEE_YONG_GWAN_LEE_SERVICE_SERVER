@@ -10,18 +10,18 @@ import java.util.Optional;
 
 /**
  * 시간 슬롯 영속성 포트.
- *
+ * <p>
  * Hexagonal Architecture의 Port 인터페이스로, 도메인 계층이 인프라 계층에 의존하지 않도록
  * 추상화를 제공한다.
- *
+ * <p>
  * SOLID 원칙:
- * 
- *   DIP (Dependency Inversion Principle): 도메인이 구체적인 JPA 구현체가 아닌 이 인터페이스에 의존
- *   ISP (Interface Segregation Principle): 도메인에 필요한 메서드만 정의
- * 
+ * <p>
+ * DIP (Dependency Inversion Principle): 도메인이 구체적인 JPA 구현체가 아닌 이 인터페이스에 의존
+ * ISP (Interface Segregation Principle): 도메인에 필요한 메서드만 정의
+ *
  */
 public interface TimeSlotPort {
-
+	
 	/**
 	 * Room ID와 날짜, 시간으로 슬롯을 조회한다.
 	 *
@@ -32,7 +32,7 @@ public interface TimeSlotPort {
 	 */
 	Optional<RoomTimeSlot> findByRoomIdAndSlotDateAndSlotTime(
 			Long roomId, LocalDate slotDate, LocalTime slotTime);
-
+	
 	/**
 	 * Room ID와 날짜 범위로 슬롯 목록을 조회한다.
 	 *
@@ -43,7 +43,7 @@ public interface TimeSlotPort {
 	 */
 	List<RoomTimeSlot> findByRoomIdAndSlotDateBetween(
 			Long roomId, LocalDate startDate, LocalDate endDate);
-
+	
 	/**
 	 * Room ID와 날짜, 상태로 슬롯 목록을 조회한다.
 	 *
@@ -54,7 +54,7 @@ public interface TimeSlotPort {
 	 */
 	List<RoomTimeSlot> findByRoomIdAndSlotDateAndStatus(
 			Long roomId, LocalDate slotDate, SlotStatus status);
-
+	
 	/**
 	 * Reservation ID로 슬롯 목록을 조회한다.
 	 *
@@ -62,7 +62,7 @@ public interface TimeSlotPort {
 	 * @return 조회된 슬롯 목록
 	 */
 	List<RoomTimeSlot> findByReservationId(Long reservationId);
-
+	
 	/**
 	 * 슬롯을 저장한다.
 	 *
@@ -70,7 +70,7 @@ public interface TimeSlotPort {
 	 * @return 저장된 슬롯
 	 */
 	RoomTimeSlot save(RoomTimeSlot slot);
-
+	
 	/**
 	 * 여러 슬롯을 한 번에 저장한다.
 	 *
@@ -78,7 +78,7 @@ public interface TimeSlotPort {
 	 * @return 저장된 슬롯 목록
 	 */
 	List<RoomTimeSlot> saveAll(List<RoomTimeSlot> slots);
-
+	
 	/**
 	 * 특정 날짜 이전의 모든 슬롯을 삭제한다.
 	 *
@@ -86,14 +86,14 @@ public interface TimeSlotPort {
 	 * @return 삭제된 슬롯 개수
 	 */
 	int deleteBySlotDateBefore(LocalDate date);
-
+	
 	/**
 	 * Room ID로 모든 슬롯을 삭제한다.
 	 *
 	 * @param roomId 룸 ID
 	 */
 	void deleteByRoomId(Long roomId);
-
+	
 	/**
 	 * Room ID와 날짜 범위, 상태로 슬롯 개수를 조회한다.
 	 *
@@ -105,7 +105,7 @@ public interface TimeSlotPort {
 	 */
 	long countByRoomIdAndDateRangeAndStatus(
 			Long roomId, LocalDate startDate, LocalDate endDate, SlotStatus status);
-
+	
 	/**
 	 * 만료된 PENDING 슬롯을 조회한다.
 	 *

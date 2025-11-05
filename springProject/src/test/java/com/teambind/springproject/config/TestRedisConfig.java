@@ -9,7 +9,7 @@ import static org.mockito.Mockito.mock;
 
 /**
  * 테스트용 Redis 설정.
- *
+ * <p>
  * ShedLockConfig가 요구하는 RedisConnectionFactory를 Mock으로 제공한다.
  */
 @TestConfiguration

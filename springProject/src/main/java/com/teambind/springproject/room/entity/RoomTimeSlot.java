@@ -12,16 +12,16 @@ import java.util.Objects;
 
 /**
  * 룸의 시간 슬롯을 나타내는 Entity.
- *
+ * <p>
  * 운영 정책에 따라 생성되며, 예약 이벤트에 따라 상태가 변경된다. Rolling Window 방식으로 항상 2달치의 슬롯이
  * 유지된다.
- *
+ * <p>
  * 상태 전이:
- *
- *
+ * <p>
+ * <p>
  * AVAILABLE → PENDING → RESERVED → CANCELLED
- *           ↓
- *       AVAILABLE (결제 실패 시)
+ * ↓
+ * AVAILABLE (결제 실패 시)
  *
  */
 @Entity
@@ -104,7 +104,7 @@ public class RoomTimeSlot {
 	 *
 	 * @param reservationId 예약 ID
 	 * @throws InvalidSlotStateTransitionException 슬롯이 AVAILABLE 상태가 아닌 경우
-	 * @throws InvalidRequestException reservationId가 null인 경우
+	 * @throws InvalidRequestException             reservationId가 null인 경우
 	 */
 	public void markAsPending(Long reservationId) {
 		if (status != SlotStatus.AVAILABLE) {
@@ -163,10 +163,10 @@ public class RoomTimeSlot {
 		this.reservationId = null;
 		this.lastUpdated = LocalDateTime.now();
 	}
-
+	
 	/**
 	 * 슬롯을 휴무 상태로 전환한다.
-	 *
+	 * <p>
 	 * 휴무일 설정 시 호출되며, AVAILABLE 상태의 슬롯만 CLOSED로 변경할 수 있다.
 	 *
 	 * @throws InvalidSlotStateTransitionException 슬롯이 AVAILABLE 상태가 아닌 경우
@@ -179,10 +179,10 @@ public class RoomTimeSlot {
 		this.status = SlotStatus.CLOSED;
 		this.lastUpdated = LocalDateTime.now();
 	}
-
+	
 	/**
 	 * 휴무 슬롯을 예약 가능 상태로 전환한다.
-	 *
+	 * <p>
 	 * 휴무일 해제 시 호출된다.
 	 *
 	 * @throws InvalidSlotStateTransitionException 슬롯이 CLOSED 상태가 아닌 경우
@@ -248,10 +248,9 @@ public class RoomTimeSlot {
 		if (this == o) {
 			return true;
 		}
-		if (!(o instanceof RoomTimeSlot)) {
+		if (!(o instanceof RoomTimeSlot that)) {
 			return false;
 		}
-		RoomTimeSlot that = (RoomTimeSlot) o;
 		return Objects.equals(slotId, that.slotId);
 	}
 	

@@ -14,24 +14,24 @@ import java.util.Optional;
 
 /**
  * 슬롯 예약 대기 이벤트 핸들러.
- * 
+ * <p>
  * 여러 슬롯을 AVAILABLE → PENDING 상태로 전환한다.
  */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class SlotReservedEventHandler implements EventHandler<SlotReservedEvent> {
-
+	
 	private final RoomTimeSlotRepository slotRepository;
-
+	
 	@Override
 	@Transactional
 	public void handle(SlotReservedEvent event) {
 		log.info("Processing SlotReservedEvent: roomId={}, slotDate={}, startTimes={}, reservationId={}",
 				event.getRoomId(), event.getSlotDate(), event.getStartTimes(), event.getReservationId());
-
+		
 		int reservedCount = 0;
-
+		
 		// 각 시작 시각에 대해 슬롯을 예약 대기 상태로 변경
 		for (LocalTime startTime : event.getStartTimes()) {
 			Optional<RoomTimeSlot> slotOptional = slotRepository.findByRoomIdAndSlotDateAndSlotTime(
@@ -39,14 +39,14 @@ public class SlotReservedEventHandler implements EventHandler<SlotReservedEvent>
 					event.getSlotDate(),
 					startTime
 			);
-
+			
 			if (slotOptional.isPresent()) {
 				RoomTimeSlot slot = slotOptional.get();
 				try {
 					slot.markAsPending(event.getReservationId());
 					slotRepository.save(slot);
 					reservedCount++;
-
+					
 					log.debug("Slot marked as PENDING: slotId={}, startTime={}",
 							slot.getSlotId(), startTime);
 				} catch (Exception e) {
@@ -58,11 +58,11 @@ public class SlotReservedEventHandler implements EventHandler<SlotReservedEvent>
 						event.getRoomId(), event.getSlotDate(), startTime);
 			}
 		}
-
+		
 		log.info("SlotReservedEvent processed: reservationId={}, reserved {} of {} slots",
 				event.getReservationId(), reservedCount, event.getStartTimes().size());
 	}
-
+	
 	@Override
 	public String getSupportedEventType() {
 		return "SlotReserved";

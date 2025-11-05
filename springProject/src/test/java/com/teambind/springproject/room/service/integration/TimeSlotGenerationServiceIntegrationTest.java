@@ -12,7 +12,6 @@ import com.teambind.springproject.room.entity.vo.WeeklySlotSchedule;
 import com.teambind.springproject.room.entity.vo.WeeklySlotTime;
 import com.teambind.springproject.room.repository.RoomOperatingPolicyRepository;
 import com.teambind.springproject.room.repository.RoomTimeSlotRepository;
-
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * TimeSlotGenerationService 통합 테스트.
- *
+ * <p>
  * 실제 H2 데이터베이스와 Repository를 사용하여 슬롯 생성 기능을 검증한다.
  */
 @Slf4j

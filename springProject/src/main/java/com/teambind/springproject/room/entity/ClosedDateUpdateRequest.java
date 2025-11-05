@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 /**
  * 휴무일 업데이트 요청 엔티티.
- * 
+ * <p>
  * 비동기 휴무일 업데이트 작업의 상태를 추적한다.
  */
 @Entity
@@ -18,36 +18,36 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ClosedDateUpdateRequest {
-
+	
 	@Id
 	@Column(length = 36)
 	private String requestId;
-
+	
 	@Column(nullable = false)
 	private Long roomId;
-
+	
 	@Column(nullable = false)
 	private Integer closedDateCount;
-
+	
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 20)
 	private GenerationStatus status;
-
+	
 	@Column
 	private Integer affectedSlots;
-
+	
 	@Column(nullable = false)
 	private LocalDateTime requestedAt;
-
+	
 	@Column
 	private LocalDateTime startedAt;
-
+	
 	@Column
 	private LocalDateTime completedAt;
-
+	
 	@Column(length = 1000)
 	private String errorMessage;
-
+	
 	private ClosedDateUpdateRequest(
 			String requestId,
 			Long roomId,
@@ -59,7 +59,7 @@ public class ClosedDateUpdateRequest {
 		this.status = GenerationStatus.REQUESTED;
 		this.requestedAt = LocalDateTime.now();
 	}
-
+	
 	/**
 	 * 새로운 휴무일 업데이트 요청을 생성한다.
 	 *
@@ -75,7 +75,7 @@ public class ClosedDateUpdateRequest {
 	) {
 		return new ClosedDateUpdateRequest(requestId, roomId, closedDateCount);
 	}
-
+	
 	/**
 	 * 처리 시작 상태로 전환한다.
 	 */
@@ -83,7 +83,7 @@ public class ClosedDateUpdateRequest {
 		this.status = GenerationStatus.IN_PROGRESS;
 		this.startedAt = LocalDateTime.now();
 	}
-
+	
 	/**
 	 * 완료 상태로 전환한다.
 	 *
@@ -94,7 +94,7 @@ public class ClosedDateUpdateRequest {
 		this.affectedSlots = affectedSlots;
 		this.completedAt = LocalDateTime.now();
 	}
-
+	
 	/**
 	 * 실패 상태로 전환한다.
 	 *

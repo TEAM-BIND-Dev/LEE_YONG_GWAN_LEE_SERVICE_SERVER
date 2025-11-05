@@ -13,41 +13,41 @@ import java.util.Objects;
 
 /**
  * 휴무일 범위를 나타내는 Value Object.
- *
+ * <p>
  * 특정 날짜 또는 날짜 범위의 휴무를 표현하며, 선택적으로 시간 범위도 지정할 수 있다.
  * 또한 반복 패턴 기반 휴무일도 지원한다 (예: 매주 월요일 09:00~10:00 휴무).
+ * <p>
+ * <p>
+ * 날짜 기반 휴무: startDate, endDate 사용
+ * 패턴 기반 휴무: dayOfWeek, recurrencePattern 사용
+ * startTime/endTime이 null이면 하루 종일 휴무
+ * startTime/endTime이 있으면 해당 시간 범위만 휴무
  *
- * 
- *   날짜 기반 휴무: startDate, endDate 사용
- *   패턴 기반 휴무: dayOfWeek, recurrencePattern 사용
- *   startTime/endTime이 null이면 하루 종일 휴무
- *   startTime/endTime이 있으면 해당 시간 범위만 휴무
- * 
  */
 @Embeddable
 public class ClosedDateRange {
-
+	
 	// 날짜 기반 휴무
 	private LocalDate startDate;
-
+	
 	private LocalDate endDate;
-
+	
 	// 패턴 기반 휴무
 	@Enumerated(EnumType.STRING)
 	private DayOfWeek dayOfWeek;
-
+	
 	@Enumerated(EnumType.STRING)
 	private RecurrencePattern recurrencePattern;
-
+	
 	// 시간 범위 (공통)
 	private LocalTime startTime;
-
+	
 	private LocalTime endTime;
 	
 	protected ClosedDateRange() {
 		// JPA를 위한 기본 생성자
 	}
-
+	
 	// 날짜 기반 휴무 생성자
 	private ClosedDateRange(
 			LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
@@ -57,18 +57,18 @@ public class ClosedDateRange {
 		this.endTime = endTime; // nullable
 		this.dayOfWeek = null;
 		this.recurrencePattern = null;
-
+		
 		if (endDate != null && endDate.isBefore(startDate)) {
 			throw InvalidTimeRangeException.endDateBeforeStartDate(
 					startDate.toString(), endDate.toString());
 		}
-
+		
 		if (startTime != null && endTime != null && endTime.isBefore(startTime)) {
 			throw InvalidTimeRangeException.endBeforeStart(
 					startTime.toString(), endTime.toString());
 		}
 	}
-
+	
 	// 패턴 기반 휴무 생성자
 	private ClosedDateRange(
 			DayOfWeek dayOfWeek,
@@ -81,7 +81,7 @@ public class ClosedDateRange {
 		this.endTime = endTime; // nullable
 		this.startDate = null;
 		this.endDate = null;
-
+		
 		if (startTime != null && endTime != null && endTime.isBefore(startTime)) {
 			throw InvalidTimeRangeException.endBeforeStart(
 					startTime.toString(), endTime.toString());
@@ -121,7 +121,7 @@ public class ClosedDateRange {
 			LocalDate date, LocalTime startTime, LocalTime endTime) {
 		return new ClosedDateRange(date, null, startTime, endTime);
 	}
-
+	
 	/**
 	 * 패턴 기반 하루 종일 휴무를 생성한다.
 	 * (예: 매주 월요일 종일 휴무)
@@ -135,7 +135,7 @@ public class ClosedDateRange {
 			RecurrencePattern recurrencePattern) {
 		return new ClosedDateRange(dayOfWeek, recurrencePattern, null, null);
 	}
-
+	
 	/**
 	 * 패턴 기반 특정 시간 범위 휴무를 생성한다.
 	 * (예: 매주 월요일 09:00~10:00 휴무)
@@ -156,7 +156,7 @@ public class ClosedDateRange {
 	
 	/**
 	 * 주어진 날짜가 이 휴무 범위에 포함되는지 확인한다.
-	 * 
+	 * <p>
 	 * 패턴 기반인 경우 요일과 반복 패턴을 체크하고,
 	 * 날짜 기반인 경우 날짜 범위를 체크한다.
 	 *
@@ -169,7 +169,7 @@ public class ClosedDateRange {
 			return date.getDayOfWeek() == dayOfWeek
 					&& recurrencePattern.matches(date);
 		}
-
+		
 		// 날짜 기반 휴무일 체크
 		LocalDate effectiveEndDate = endDate != null ? endDate : startDate;
 		return !date.isBefore(startDate) && !date.isAfter(effectiveEndDate);
@@ -177,7 +177,7 @@ public class ClosedDateRange {
 	
 	/**
 	 * 주어진 시각이 이 휴무 시간 범위에 포함되는지 확인한다.
-	 *
+	 * <p>
 	 * startTime/endTime이 null이면 하루 종일 휴무로 간주하여 항상 true를 반환한다.
 	 *
 	 * @param time 확인할 시각
@@ -200,7 +200,7 @@ public class ClosedDateRange {
 	public boolean contains(LocalDate date, LocalTime time) {
 		return containsDate(date) && containsTime(time);
 	}
-
+	
 	/**
 	 * 패턴 기반 휴무일인지 확인한다.
 	 *
@@ -209,28 +209,28 @@ public class ClosedDateRange {
 	public boolean isPatternBased() {
 		return dayOfWeek != null && recurrencePattern != null;
 	}
-
+	
 	// Getters
 	public LocalDate getStartDate() {
 		return startDate;
 	}
-
+	
 	public LocalDate getEndDate() {
 		return endDate;
 	}
-
+	
 	public DayOfWeek getDayOfWeek() {
 		return dayOfWeek;
 	}
-
+	
 	public RecurrencePattern getRecurrencePattern() {
 		return recurrencePattern;
 	}
-
+	
 	public LocalTime getStartTime() {
 		return startTime;
 	}
-
+	
 	public LocalTime getEndTime() {
 		return endTime;
 	}
@@ -240,10 +240,9 @@ public class ClosedDateRange {
 		if (this == o) {
 			return true;
 		}
-		if (!(o instanceof ClosedDateRange)) {
+		if (!(o instanceof ClosedDateRange that)) {
 			return false;
 		}
-		ClosedDateRange that = (ClosedDateRange) o;
 		return Objects.equals(startDate, that.startDate)
 				&& Objects.equals(endDate, that.endDate)
 				&& dayOfWeek == that.dayOfWeek
@@ -251,7 +250,7 @@ public class ClosedDateRange {
 				&& Objects.equals(startTime, that.startTime)
 				&& Objects.equals(endTime, that.endTime);
 	}
-
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(startDate, endDate, dayOfWeek, recurrencePattern, startTime, endTime);

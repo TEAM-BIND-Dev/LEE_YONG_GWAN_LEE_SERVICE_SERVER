@@ -15,10 +15,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * RoomTimeSlot 엔티티 단위 테스트.
- *
+ * <p>
  * 테스트 범위:
- *
- *
+ * <p>
+ * <p>
  * Factory 메서드를 통한 슬롯 생성
  * 상태 전이 (AVAILABLE → PENDING → RESERVED)
  * 예약 취소 및 복구
@@ -147,18 +147,18 @@ class RoomTimeSlotTest {
 			RoomTimeSlot slot = RoomTimeSlot.available(101L, LocalDate.now(), LocalTime.of(14, 0));
 			slot.markAsPending(1001L);
 			slot.confirm();
-
+			
 			// When & Then
 			assertThatThrownBy(() -> slot.markAsPending(1002L))
 					.isInstanceOf(InvalidSlotStateTransitionException.class);
 		}
-
+		
 		@Test
 		@DisplayName("[오류] CLOSED 상태의 슬롯은 PENDING으로 전환할 수 없다")
 		void cannotMarkClosedSlotAsPending() {
 			// Given
 			RoomTimeSlot slot = RoomTimeSlot.closed(101L, LocalDate.now(), LocalTime.of(14, 0));
-
+			
 			// When & Then
 			assertThatThrownBy(() -> slot.markAsPending(1001L))
 					.isInstanceOf(InvalidSlotStateTransitionException.class);
@@ -169,7 +169,7 @@ class RoomTimeSlotTest {
 		void markAsPendingWithNullReservationId() {
 			// Given
 			RoomTimeSlot slot = RoomTimeSlot.available(101L, LocalDate.now(), LocalTime.of(14, 0));
-
+			
 			// When & Then
 			assertThatThrownBy(() -> slot.markAsPending(null))
 					.isInstanceOf(InvalidRequestException.class)
@@ -206,12 +206,12 @@ class RoomTimeSlotTest {
 		void cannotConfirmAvailableSlot() {
 			// Given
 			RoomTimeSlot slot = RoomTimeSlot.available(101L, LocalDate.now(), LocalTime.of(14, 0));
-
+			
 			// When & Then
 			assertThatThrownBy(slot::confirm)
 					.isInstanceOf(InvalidSlotStateTransitionException.class);
 		}
-
+		
 		@Test
 		@DisplayName("[오류] 이미 RESERVED 상태인 슬롯은 다시 확정할 수 없다")
 		void cannotConfirmReservedSlot() {

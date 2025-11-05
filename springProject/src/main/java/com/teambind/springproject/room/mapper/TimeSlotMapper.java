@@ -1,9 +1,9 @@
 package com.teambind.springproject.room.mapper;
 
+import com.teambind.springproject.room.entity.RoomTimeSlot;
 import com.teambind.springproject.room.query.dto.AvailableSlotResponse;
 import com.teambind.springproject.room.query.dto.SlotAvailabilityResponse;
 import com.teambind.springproject.room.query.dto.TimeSlotResponse;
-import com.teambind.springproject.room.entity.RoomTimeSlot;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;

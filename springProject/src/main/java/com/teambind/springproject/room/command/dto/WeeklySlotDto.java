@@ -16,17 +16,17 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WeeklySlotDto {
-
+	
 	/**
 	 * 요일
 	 */
 	private DayOfWeek dayOfWeek;
-
+	
 	/**
 	 * 반복 패턴 (EVERY_WEEK, ODD_WEEK, EVEN_WEEK)
 	 */
 	private RecurrencePattern recurrencePattern;
-
+	
 	/**
 	 * 해당 요일의 시작 시각 목록
 	 */

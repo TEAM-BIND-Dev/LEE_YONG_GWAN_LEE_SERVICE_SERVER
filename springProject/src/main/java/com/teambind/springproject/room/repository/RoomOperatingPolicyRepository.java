@@ -8,12 +8,12 @@ import java.util.Optional;
 
 /**
  * RoomOperatingPolicy에 대한 데이터 접근 계층.
- *
+ * <p>
  * 주요 책임:
- *
- *
- *   정책 CRUD
- *   Room ID로 정책 조회
+ * <p>
+ * <p>
+ * 정책 CRUD
+ * Room ID로 정책 조회
  *
  */
 @Repository

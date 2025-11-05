@@ -4,12 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teambind.springproject.message.event.Event;
 import com.teambind.springproject.message.handler.EventHandler;
-import com.teambind.springproject.room.event.event.ClosedDateUpdateRequestedEvent;
-import com.teambind.springproject.room.event.event.SlotGenerationRequestedEvent;
-import com.teambind.springproject.room.event.event.SlotCancelledEvent;
-import com.teambind.springproject.room.event.event.SlotConfirmedEvent;
-import com.teambind.springproject.room.event.event.SlotReservedEvent;
-import com.teambind.springproject.room.event.event.SlotRestoredEvent;
+import com.teambind.springproject.room.event.event.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -21,7 +16,7 @@ import java.util.Map;
 
 /**
  * 통합 이벤트 컨슈머
- * 
+ * <p>
  * 모든 이벤트 토픽을 구독하여 eventType에 따라 적절한 핸들러로 라우팅한다.
  */
 @Slf4j
@@ -30,7 +25,7 @@ import java.util.Map;
 public class EventConsumer {
 	
 	private static final Map<String, Class<? extends Event>> EVENT_TYPE_MAP = new HashMap<>();
-
+	
 	static {
 		EVENT_TYPE_MAP.put("SlotReserved", SlotReservedEvent.class);
 		EVENT_TYPE_MAP.put("SlotConfirmed", SlotConfirmedEvent.class);

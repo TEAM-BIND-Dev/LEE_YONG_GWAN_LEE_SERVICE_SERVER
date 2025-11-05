@@ -9,28 +9,28 @@ import org.springframework.http.HttpStatus;
  */
 @Getter
 public abstract class CustomException extends RuntimeException {
-
+	
 	private final ErrorCode errorCode;
 	private final HttpStatus httpStatus;
-
+	
 	protected CustomException(ErrorCode errorCode) {
 		super(errorCode.getMessage());
 		this.errorCode = errorCode;
 		this.httpStatus = errorCode.getStatus();
 	}
-
+	
 	protected CustomException(ErrorCode errorCode, String message) {
 		super(message);
 		this.errorCode = errorCode;
 		this.httpStatus = errorCode.getStatus();
 	}
-
+	
 	protected CustomException(ErrorCode errorCode, String message, Throwable cause) {
 		super(message, cause);
 		this.errorCode = errorCode;
 		this.httpStatus = errorCode.getStatus();
 	}
-
+	
 	/**
 	 * 예외 타입 반환 (Domain/Application 구분용)
 	 */

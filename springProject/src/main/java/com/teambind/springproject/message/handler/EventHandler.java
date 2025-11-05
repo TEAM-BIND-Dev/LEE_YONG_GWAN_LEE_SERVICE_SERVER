@@ -4,7 +4,7 @@ import com.teambind.springproject.message.event.Event;
 
 /**
  * 이벤트 핸들러 인터페이스
- * 
+ * <p>
  * 각 이벤트 타입별로 구현하여 이벤트 처리 로직을 정의한다.
  *
  * @param <T> 처리할 이벤트 타입
