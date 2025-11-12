@@ -5,6 +5,7 @@ import com.teambind.springproject.room.domain.port.TimeSlotPort;
 import com.teambind.springproject.room.entity.RoomTimeSlot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,9 +15,9 @@ import java.util.List;
 
 /**
  * 시간 슬롯 상태 관리 서비스 구현체.
- * <p>
+ *
  * Hexagonal Architecture 적용:
- * <p>
+ *
  * Infrastructure 계층(JPA)에 직접 의존하지 않고 Port 인터페이스에 의존
  * DIP (Dependency Inversion Principle) 준수
  *
@@ -26,7 +27,8 @@ import java.util.List;
 public class TimeSlotManagementServiceImpl implements TimeSlotManagementService {
 	
 	private static final Logger log = LoggerFactory.getLogger(TimeSlotManagementServiceImpl.class);
-	private static final int PENDING_EXPIRATION_MINUTES = 15;
+	@Value("${room.timeSlot.pending.expiration.minutes}")
+	private static int PENDING_EXPIRATION_MINUTES;
 
 	private final TimeSlotPort timeSlotPort;
 

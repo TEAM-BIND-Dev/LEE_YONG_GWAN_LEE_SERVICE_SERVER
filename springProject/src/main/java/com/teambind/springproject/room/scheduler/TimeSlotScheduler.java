@@ -80,12 +80,12 @@ public class TimeSlotScheduler {
 	
 	/**
 	 * 5분마다 만료된 PENDING 슬롯을 복구한다.
-	 * <p>
-	 * 15분 이상 PENDING 상태인 슬롯을 AVAILABLE로 복구한다.
-	 * <p>
+	 *
+	 * 20분 이상 PENDING 상태인 슬롯을 AVAILABLE로 복구한다.
+	 *
 	 * Lock 설정:
-	 * <p>
-	 * <p>
+	 *
+	 *
 	 * lockAtMostFor: 2분 (작업이 2분 이상 걸리면 자동 해제)
 	 * lockAtLeastFor: 30초 (최소 30초 간격 유지)
 	 *

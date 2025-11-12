@@ -11,3 +11,8 @@ external:
       url: ${PLACE_INFO_API_URL:http://localhost:8081}
       connect-timeout: ${PLACE_INFO_API_CONNECT_TIMEOUT:5000}
       read-timeout: ${PLACE_INFO_API_READ_TIMEOUT:5000}
+room:
+  timeSlot:
+    pending:
+      expiration:
+        minutes: 30
