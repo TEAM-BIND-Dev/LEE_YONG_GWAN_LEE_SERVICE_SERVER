@@ -43,3 +43,11 @@ external:
       url: http://localhost:8081
       connect-timeout: 5000
       read-timeout: 5000
+
+room:
+  timeSlot:
+    pending:
+      expiration:
+        minutes: 30
+    rollingWindow:
+      days: 30

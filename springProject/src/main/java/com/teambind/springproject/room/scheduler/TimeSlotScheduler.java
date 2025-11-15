@@ -5,6 +5,7 @@ import com.teambind.springproject.room.command.domain.service.TimeSlotManagement
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,7 @@ import java.time.LocalDate;
  * 주요 책임:
  * <p>
  * <p>
- * 매일 Rolling Window 유지 (어제 슬롯 삭제, 60일 후 슬롯 생성)
+ * 매일 Rolling Window 유지 (어제 슬롯 삭제, N일 후 슬롯 생성)
  * 만료된 PENDING 슬롯 복구
  * <p>
  * <p>
@@ -30,12 +31,15 @@ import java.time.LocalDate;
  */
 @Component
 public class TimeSlotScheduler {
-	
+
 	private static final Logger log = LoggerFactory.getLogger(TimeSlotScheduler.class);
-	
+
 	private final TimeSlotGenerationService generationService;
 	private final TimeSlotManagementService managementService;
-	
+
+	@Value("${room.timeSlot.rollingWindow.days}")
+	private int rollingWindowDays;
+
 	public TimeSlotScheduler(
 			TimeSlotGenerationService generationService, TimeSlotManagementService managementService) {
 		this.generationService = generationService;
@@ -46,7 +50,7 @@ public class TimeSlotScheduler {
 	 * 매일 새벽 2시에 Rolling Window를 유지한다.
 	 * 처리 플로우:
 	 * 어제 날짜의 슬롯 삭제
-	 * 60일 후 날짜의 슬롯 생성
+	 * 설정된 일수(기본 30일) 후 날짜의 슬롯 생성
 	 * Lock 설정:
 	 * lockAtMostFor: 5분 (작업이 5분 이상 걸리면 자동 해제)
 	 * lockAtLeastFor: 1분 (최소 1분 간격 유지)
@@ -58,18 +62,18 @@ public class TimeSlotScheduler {
 			lockAtMostFor = "PT5M", // ISO-8601 Duration: 5분
 			lockAtLeastFor = "PT1M") // 최소 1분 간격
 	public void maintainRollingWindow() {
-		log.info("Starting rolling window maintenance");
-		
+		log.info("Starting rolling window maintenance (rollingWindowDays={})", rollingWindowDays);
+
 		try {
 			// 1. 어제 슬롯 삭제
 			int deletedCount = generationService.deleteYesterdaySlots();
 			log.info("Deleted yesterday's slots: count={}", deletedCount);
-			
-			// 2. 60일 후 슬롯 생성
-			LocalDate targetDate = LocalDate.now().plusDays(60);
+
+			// 2. 설정된 일수 후 슬롯 생성
+			LocalDate targetDate = LocalDate.now().plusDays(rollingWindowDays);
 			int createdCount = generationService.generateSlotsForAllRooms(targetDate);
 			log.info("Created slots for date {}: count={}", targetDate, createdCount);
-			
+
 			log.info("Rolling window maintenance completed: deleted={}, created={}",
 					deletedCount, createdCount);
 		} catch (Exception e) {
