@@ -9,9 +9,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -36,8 +38,9 @@ class TimeSlotManagementServiceImplTest {
 	@Mock
 	private TimeSlotPort timeSlotPort;
 
-	@InjectMocks
 	private TimeSlotManagementServiceImpl service;
+
+	private static final int PENDING_EXPIRATION_MINUTES = 40;
 	
 	private Long roomId;
 	private LocalDate slotDate;
@@ -47,13 +50,17 @@ class TimeSlotManagementServiceImplTest {
 	
 	@BeforeEach
 	void setUp() {
+		// Service 생성 (Constructor Injection)
+		service = new TimeSlotManagementServiceImpl(timeSlotPort, PENDING_EXPIRATION_MINUTES);
+
 		roomId = 100L;
 		slotDate = LocalDate.of(2025, 1, 15);
 		slotTime = LocalTime.of(10, 0);
 		reservationId = 1L;
 		availableSlot = RoomTimeSlot.available(roomId, slotDate, slotTime);
-		
+
 		log.info("=== 테스트 데이터 초기화 ===");
+		log.info("- pendingExpirationMinutes: {}", PENDING_EXPIRATION_MINUTES);
 		log.info("- roomId: {}", roomId);
 		log.info("- slotDate: {}", slotDate);
 		log.info("- slotTime: {}", slotTime);
@@ -264,9 +271,9 @@ class TimeSlotManagementServiceImplTest {
 		
 		List<RoomTimeSlot> expiredSlots = List.of(expiredSlot1, expiredSlot2);
 		log.info("[Given] - 2개의 만료된 PENDING 슬롯 준비");
-		
-		when(timeSlotPort.findExpiredPendingSlots(15)).thenReturn(expiredSlots);
-		log.info("[Given] - timeSlotPort.findExpiredPendingSlots(15) -> 2개 슬롯 반환");
+
+		when(timeSlotPort.findExpiredPendingSlots(PENDING_EXPIRATION_MINUTES)).thenReturn(expiredSlots);
+		log.info("[Given] - timeSlotPort.findExpiredPendingSlots({}) -> 2개 슬롯 반환", PENDING_EXPIRATION_MINUTES);
 		
 		// When
 		log.info("[When] restoreExpiredPendingSlots() 호출");
@@ -338,8 +345,8 @@ class TimeSlotManagementServiceImplTest {
 		
 		// Given
 		log.info("[Given] Mock 동작 설정");
-		log.info("[Given] - timeSlotPort.findExpiredPendingSlots(15) -> 빈 리스트 반환");
-		when(timeSlotPort.findExpiredPendingSlots(15)).thenReturn(List.of());
+		log.info("[Given] - timeSlotPort.findExpiredPendingSlots({}) -> 빈 리스트 반환", PENDING_EXPIRATION_MINUTES);
+		when(timeSlotPort.findExpiredPendingSlots(PENDING_EXPIRATION_MINUTES)).thenReturn(List.of());
 		
 		// When
 		log.info("[When] restoreExpiredPendingSlots() 호출");
@@ -362,7 +369,60 @@ class TimeSlotManagementServiceImplTest {
 		log.info("[Then] [검증3] 이벤트가 발행되지 않았는지 확인");
 // 		verify(eventPublisher, never()).publishEvent(any());
 		log.info("[Then] - ✓ 이벤트 미발행 확인됨");
-		
+
 		log.info("=== [만료된 슬롯 없음] 테스트 성공 ===");
+	}
+
+	@Test
+	@DisplayName("[#56] 설정값이 올바르게 주입되어야 함")
+	void configurationValueInjection() {
+		log.info("=== [설정값 주입 검증] 테스트 시작 ===");
+
+		// When: Service가 생성될 때 설정값 주입
+		log.info("[When] Service 생성 시 생성자를 통해 pendingExpirationMinutes 주입");
+
+		// Then: 필드값이 설정값과 일치
+		Integer actualValue = (Integer) ReflectionTestUtils.getField(service, "pendingExpirationMinutes");
+		log.info("[Then] 주입된 값 확인");
+		log.info("[Then] - 예상값: {}", PENDING_EXPIRATION_MINUTES);
+		log.info("[Then] - 실제값: {}", actualValue);
+
+		assertThat(actualValue).isEqualTo(PENDING_EXPIRATION_MINUTES);
+		log.info("[Then] - ✓ 설정값이 올바르게 주입됨");
+
+		log.info("=== [설정값 주입 검증] 테스트 성공 ===");
+	}
+
+	@Test
+	@DisplayName("[#56] 만료 시간 계산이 주입된 설정값을 사용해야 함")
+	void expirationCalculationUsesInjectedValue() {
+		log.info("=== [만료 시간 계산 설정값 사용 검증] 테스트 시작 ===");
+
+		// Given
+		log.info("[Given] Mock 동작 설정");
+		RoomTimeSlot expiredSlot = RoomTimeSlot.available(roomId, slotDate, LocalTime.of(14, 0));
+		expiredSlot.markAsPending(100L);
+
+		when(timeSlotPort.findExpiredPendingSlots(PENDING_EXPIRATION_MINUTES))
+				.thenReturn(List.of(expiredSlot));
+		log.info("[Given] - timeSlotPort.findExpiredPendingSlots({}) -> 1개 슬롯 반환", PENDING_EXPIRATION_MINUTES);
+
+		// When
+		log.info("[When] restoreExpiredPendingSlots() 호출");
+		service.restoreExpiredPendingSlots();
+
+		// Then: Port 메서드가 정확한 파라미터로 호출되었는지 검증
+		log.info("[Then] Port 메서드 호출 검증");
+		ArgumentCaptor<Integer> minutesCaptor = ArgumentCaptor.forClass(Integer.class);
+		verify(timeSlotPort).findExpiredPendingSlots(minutesCaptor.capture());
+
+		Integer capturedMinutes = minutesCaptor.getValue();
+		log.info("[Then] - 예상 파라미터: {}", PENDING_EXPIRATION_MINUTES);
+		log.info("[Then] - 실제 파라미터: {}", capturedMinutes);
+
+		assertThat(capturedMinutes).isEqualTo(PENDING_EXPIRATION_MINUTES);
+		log.info("[Then] - ✓ 만료 시간 계산에 주입된 설정값({})이 사용됨", PENDING_EXPIRATION_MINUTES);
+
+		log.info("=== [만료 시간 계산 설정값 사용 검증] 테스트 성공 ===");
 	}
 }
