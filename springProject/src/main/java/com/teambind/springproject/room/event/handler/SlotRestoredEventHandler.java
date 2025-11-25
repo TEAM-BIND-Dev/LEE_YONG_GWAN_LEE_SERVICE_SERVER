@@ -1,64 +1,53 @@
 package com.teambind.springproject.room.event.handler;
 
 import com.teambind.springproject.message.handler.EventHandler;
-import com.teambind.springproject.room.entity.RoomTimeSlot;
+import com.teambind.springproject.room.command.domain.service.TimeSlotManagementService;
 import com.teambind.springproject.room.event.event.SlotRestoredEvent;
-import com.teambind.springproject.room.repository.RoomTimeSlotRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 /**
  * 슬롯 복구 이벤트 핸들러.
  * <p>
- * 해당 예약의 모든 슬롯을 CANCELLED → AVAILABLE 상태로 전환한다.
+ * Hexagonal Architecture 적용:
+ * - Infrastructure Layer의 Repository를 직접 참조하지 않음
+ * - Domain Service를 통한 간접 참조로 계층 격리 유지
+ * <p>
+ * 해당 예약의 모든 슬롯을 CANCELLED/PENDING/RESERVED → AVAILABLE 상태로 전환한다.
  */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class SlotRestoredEventHandler implements EventHandler<SlotRestoredEvent> {
-	
-	private final RoomTimeSlotRepository slotRepository;
-	
+
+	private final TimeSlotManagementService timeSlotManagementService;
+
 	@Override
 	@Transactional
 	public void handle(SlotRestoredEvent event) {
 		log.info("Processing SlotRestoredEvent: reservationId={}, reason={}",
 				event.getReservationId(), event.getRestoreReason());
-		
-		// String → Long 변환
-		Long reservationId = Long.parseLong(event.getReservationId());
 
-		// reservationId로 모든 슬롯 조회
-		List<RoomTimeSlot> slots = slotRepository.findByReservationId(reservationId);
+		try {
+			// String → Long 변환
+			Long reservationId = Long.parseLong(event.getReservationId());
 
-		if (slots.isEmpty()) {
-			log.warn("No slots found for reservationId={}", reservationId);
-			return;
+			// Domain Service를 통한 슬롯 복구 (트랜잭션 원자성 보장)
+			timeSlotManagementService.cancelSlotsByReservationId(reservationId);
+
+			log.info("SlotRestoredEvent processed successfully: reservationId={}, reason={}",
+					reservationId, event.getRestoreReason());
+
+		} catch (NumberFormatException e) {
+			log.error("Invalid reservationId format: reservationId={}", event.getReservationId(), e);
+			throw new IllegalArgumentException("Invalid reservationId format: " + event.getReservationId(), e);
+		} catch (Exception e) {
+			log.error("Failed to process SlotRestoredEvent: reservationId={}, reason={}",
+					event.getReservationId(), e.getMessage(), e);
+			throw e; // Re-throw for transaction rollback
 		}
-
-		int restoredCount = 0;
-		
-		// 모든 슬롯을 복구 상태로 변경
-		for (RoomTimeSlot slot : slots) {
-			try {
-				slot.restore();
-				slotRepository.save(slot);
-				restoredCount++;
-				
-				log.debug("Slot restored: slotId={}, slotDate={}, slotTime={}",
-						slot.getSlotId(), slot.getSlotDate(), slot.getSlotTime());
-			} catch (Exception e) {
-				log.error("Failed to restore slot: slotId={}, reason={}",
-						slot.getSlotId(), e.getMessage());
-			}
-		}
-		
-		log.info("SlotRestoredEvent processed: reservationId={}, restored {} of {} slots",
-				reservationId, restoredCount, slots.size());
 	}
 	
 	@Override
