@@ -127,4 +127,25 @@ public interface TimeSlotManagementService {
 			java.time.LocalDate slotDate,
 			java.util.List<java.time.LocalTime> slotTimes
 	);
+
+	/**
+	 * 운영 정책의 휴무일 설정에 따라 슬롯을 CLOSED 상태로 업데이트한다.
+	 * <p>
+	 * 비동기 처리를 위해 요청 상태를 관리한다:
+	 * - IN_PROGRESS: 처리 중
+	 * - COMPLETED: 완료
+	 * - FAILED: 실패
+	 * <p>
+	 * 처리 플로우:
+	 * 1. ClosedDateUpdateRequest 상태를 IN_PROGRESS로 변경
+	 * 2. RoomOperatingPolicy에서 휴무일 범위 조회
+	 * 3. 각 휴무일 범위에 대해 해당하는 슬롯 조회
+	 * 4. 휴무 범위에 포함되는 슬롯을 CLOSED 상태로 변경
+	 * 5. 요청 상태를 COMPLETED 또는 FAILED로 변경
+	 *
+	 * @param roomId    룸 ID
+	 * @param requestId 휴무일 업데이트 요청 ID
+	 * @return 업데이트된 슬롯 개수
+	 */
+	int updateClosedDatesForRoom(Long roomId, String requestId);
 }
