@@ -1,9 +1,9 @@
 package com.teambind.springproject.room.command.domain.service;
 
 import com.teambind.springproject.common.exceptions.domain.SlotNotFoundException;
-import com.teambind.springproject.room.domain.port.TimeSlotPort;
 import com.teambind.springproject.room.domain.port.ClosedDateUpdateRequestPort;
 import com.teambind.springproject.room.domain.port.OperatingPolicyPort;
+import com.teambind.springproject.room.domain.port.TimeSlotPort;
 import com.teambind.springproject.room.entity.RoomTimeSlot;
 import com.teambind.springproject.room.entity.enums.SlotStatus;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -77,24 +76,25 @@ class TimeSlotManagementServiceImplTest {
 	@DisplayName("슬롯을 PENDING 상태로 변경한다")
 	void markSlotAsPending() {
 		log.info("=== [슬롯 PENDING 상태 변경] 테스트 시작 ===");
-		
+
 		// Given
 		log.info("[Given] Mock 동작 설정");
-		log.info("[Given] - timeSlotPort.findByRoomIdAndSlotDateAndSlotTime() -> 슬롯 반환");
-		when(timeSlotPort.findByRoomIdAndSlotDateAndSlotTime(roomId, slotDate, slotTime))
-				.thenReturn(Optional.of(availableSlot));
+		log.info("[Given] - timeSlotPort.findByRoomIdAndSlotDateAndSlotTimeInWithLock() -> 슬롯 반환");
+		when(timeSlotPort.findByRoomIdAndSlotDateAndSlotTimeInWithLock(
+				eq(roomId), eq(slotDate), anyList()))
+				.thenReturn(List.of(availableSlot));
 		log.info("[Given] - 초기 슬롯 상태: {}", availableSlot.getStatus());
-		
+
 		// When
 		log.info("[When] markSlotAsPending() 호출");
 		log.info("[When] - 파라미터: roomId={}, slotDate={}, slotTime={}, reservationId={}",
 				roomId, slotDate, slotTime, reservationId);
 		service.markSlotAsPending(roomId, slotDate, slotTime, reservationId);
 		log.info("[When] - 호출 완료");
-		
+
 		// Then
 		log.info("[Then] 결과 검증 시작");
-		
+
 		log.info("[Then] [검증1] 슬롯 상태가 PENDING으로 변경되었는지 확인");
 		log.info("[Then] - 기존 상태: {}", SlotStatus.AVAILABLE);
 		log.info("[Then] - 예상 상태: {}", SlotStatus.PENDING);
@@ -108,9 +108,9 @@ class TimeSlotManagementServiceImplTest {
 		assertThat(availableSlot.getReservationId()).isEqualTo(reservationId);
 		log.info("[Then] - ✓ reservationId 설정 확인됨");
 		
-		log.info("[Then] [검증3] timeSlotPort.save()가 1번 호출되었는지 확인");
-		verify(timeSlotPort, times(1)).save(availableSlot);
-		log.info("[Then] - ✓ save() 호출 확인됨");
+		log.info("[Then] [검증3] timeSlotPort.saveAll()가 1번 호출되었는지 확인");
+		verify(timeSlotPort, times(1)).saveAll(anyList());
+		log.info("[Then] - ✓ saveAll() 호출 확인됨");
 
 		log.info("=== [슬롯 PENDING 상태 변경] 테스트 성공 ===");
 	}
@@ -322,25 +322,26 @@ class TimeSlotManagementServiceImplTest {
 		
 		// Given
 		log.info("[Given] Mock 동작 설정");
-		log.info("[Given] - timeSlotPort.findByRoomIdAndSlotDateAndSlotTime() -> 빈 Optional 반환");
-		when(timeSlotPort.findByRoomIdAndSlotDateAndSlotTime(roomId, slotDate, slotTime))
-				.thenReturn(Optional.empty());
-		
+		log.info("[Given] - timeSlotPort.findByRoomIdAndSlotDateAndSlotTimeInWithLock() -> 빈 리스트 반환");
+		when(timeSlotPort.findByRoomIdAndSlotDateAndSlotTimeInWithLock(
+				eq(roomId), eq(slotDate), anyList()))
+				.thenReturn(List.of()); // 슬롯을 찾을 수 없음
+
 		// When & Then
 		log.info("[When & Then] markSlotAsPending() 호출 시 SlotNotFoundException 발생");
 		log.info("[When & Then] - 파라미터: roomId={}, slotDate={}, slotTime={}",
 				roomId, slotDate, slotTime);
 		
 		assertThatThrownBy(() -> service.markSlotAsPending(roomId, slotDate, slotTime, reservationId))
-				.isInstanceOf(SlotNotFoundException.class);
-		
+				.isInstanceOf(SlotNotFoundException.class)
+				.hasMessageContaining("슬롯을 찾을 수 없습니다");
+
 		log.info("[Then] - ✓ SlotNotFoundException 발생 확인됨");
 		
-		log.info("[Then] [검증] save()와 이벤트 발행이 호출되지 않았는지 확인");
-		verify(timeSlotPort, never()).save(any());
-// 		verify(eventPublisher, never()).publishEvent(any());
-		log.info("[Then] - ✓ save()와 publishEvent() 미호출 확인됨");
-		
+		log.info("[Then] [검증] saveAll()이 호출되지 않았는지 확인");
+		verify(timeSlotPort, never()).saveAll(any());
+		log.info("[Then] - ✓ saveAll() 미호출 확인됨");
+
 		log.info("=== [존재하지 않는 슬롯 PENDING 변경 예외] 테스트 성공 ===");
 	}
 	

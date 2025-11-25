@@ -32,15 +32,14 @@ class SlotStatusTest {
 		void allStatusesExist() {
 			// When
 			SlotStatus[] statuses = SlotStatus.values();
-			
+
 			// Then
 			assertThat(statuses)
-					.hasSize(5)
+					.hasSize(4)
 					.containsExactly(
 							SlotStatus.AVAILABLE,
 							SlotStatus.PENDING,
 							SlotStatus.RESERVED,
-							SlotStatus.AVAILABLE,
 							SlotStatus.CLOSED
 					);
 		}
@@ -52,7 +51,6 @@ class SlotStatusTest {
 			assertThat(SlotStatus.valueOf("AVAILABLE")).isEqualTo(SlotStatus.AVAILABLE);
 			assertThat(SlotStatus.valueOf("PENDING")).isEqualTo(SlotStatus.PENDING);
 			assertThat(SlotStatus.valueOf("RESERVED")).isEqualTo(SlotStatus.RESERVED);
-			assertThat(SlotStatus.valueOf("CANCELLED")).isEqualTo(SlotStatus.AVAILABLE);
 			assertThat(SlotStatus.valueOf("CLOSED")).isEqualTo(SlotStatus.CLOSED);
 		}
 		
@@ -104,17 +102,6 @@ class SlotStatusTest {
 			// Then: 예약 확정 상태를 나타냄
 			assertThat(status).isNotNull();
 			assertThat(status.name()).isEqualTo("RESERVED");
-		}
-		
-		@Test
-		@DisplayName("[정상] CANCELLED는 취소된 상태이다")
-		void cancelledRepresentsCancelledState() {
-			// Given
-			SlotStatus status = SlotStatus.AVAILABLE;
-			
-			// Then: 취소된 상태를 나타냄
-			assertThat(status).isNotNull();
-			assertThat(status.name()).isEqualTo("CANCELLED");
 		}
 		
 		@Test

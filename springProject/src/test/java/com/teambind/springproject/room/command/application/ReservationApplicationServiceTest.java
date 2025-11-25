@@ -1,7 +1,7 @@
 package com.teambind.springproject.room.command.application;
 
-import com.teambind.springproject.common.exceptions.domain.SlotNotFoundException;
 import com.teambind.springproject.common.exceptions.domain.InvalidSlotStateTransitionException;
+import com.teambind.springproject.common.exceptions.domain.SlotNotFoundException;
 import com.teambind.springproject.message.publish.EventPublisher;
 import com.teambind.springproject.room.command.domain.service.TimeSlotManagementService;
 import com.teambind.springproject.room.command.dto.SlotReservationRequest;
@@ -101,11 +101,11 @@ class ReservationApplicationServiceTest {
 		log.info("[Then] - 예상 slotDate: {}, 실제 slotDate: {}", slotDate, publishedEvent.getSlotDate());
 		log.info("[Then] - 예상 reservationId: {}, 실제 reservationId: {}",
 				reservationId, publishedEvent.getReservationId());
-
-		assertThat(publishedEvent.getRoomId()).isEqualTo(roomId);
+		
+		assertThat(publishedEvent.getRoomId()).isEqualTo(String.valueOf(roomId));
 		assertThat(publishedEvent.getSlotDate()).isEqualTo(slotDate);
 		assertThat(publishedEvent.getStartTimes()).containsExactly(slotTime);
-		assertThat(publishedEvent.getReservationId()).isEqualTo(reservationId);
+		assertThat(publishedEvent.getReservationId()).isEqualTo(String.valueOf(reservationId));
 		log.info("[Then] - ✓ 이벤트 내용 검증 완료");
 
 		log.info("=== [정상적인 예약 생성] 테스트 성공 ===");

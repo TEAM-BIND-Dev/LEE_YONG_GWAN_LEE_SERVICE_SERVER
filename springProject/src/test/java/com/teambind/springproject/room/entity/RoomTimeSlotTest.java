@@ -288,56 +288,6 @@ class RoomTimeSlotTest {
 	}
 	
 	// ============================================================
-	// 상태 전이: CANCELLED → AVAILABLE
-	// ============================================================
-	
-	@Nested
-	@DisplayName("슬롯 복구 (CANCELLED → AVAILABLE)")
-	class RestoreTests {
-		
-		@Test
-		@DisplayName("[정상] CANCELLED 슬롯을 AVAILABLE 상태로 복구한다")
-		void restoreCancelledSlot() {
-			// Given
-			RoomTimeSlot slot = RoomTimeSlot.available(101L, LocalDate.now(), LocalTime.of(14, 0));
-			slot.markAsPending(1001L);
-			slot.cancel();
-			
-			// When
-			slot.restore();
-			
-			// Then
-			assertThat(slot.getStatus()).isEqualTo(SlotStatus.AVAILABLE);
-			assertThat(slot.getReservationId()).isNull(); // 예약 ID 제거됨
-			assertThat(slot.isAvailable()).isTrue();
-		}
-		
-		@Test
-		@DisplayName("[오류] AVAILABLE 상태의 슬롯은 복구할 수 없다")
-		void cannotRestoreAvailableSlot() {
-			// Given
-			RoomTimeSlot slot = RoomTimeSlot.available(101L, LocalDate.now(), LocalTime.of(14, 0));
-			
-			// When & Then
-			assertThatThrownBy(slot::restore)
-					.isInstanceOf(InvalidSlotStateTransitionException.class);
-		}
-		
-		@Test
-		@DisplayName("[오류] RESERVED 상태의 슬롯은 복구할 수 없다")
-		void cannotRestoreReservedSlot() {
-			// Given
-			RoomTimeSlot slot = RoomTimeSlot.available(101L, LocalDate.now(), LocalTime.of(14, 0));
-			slot.markAsPending(1001L);
-			slot.confirm();
-			
-			// When & Then
-			assertThatThrownBy(slot::restore)
-					.isInstanceOf(InvalidSlotStateTransitionException.class);
-		}
-	}
-	
-	// ============================================================
 	// 엣지 케이스: 상태 전이 시나리오
 	// ============================================================
 	
@@ -367,24 +317,18 @@ class RoomTimeSlotTest {
 		}
 		
 		@Test
-		@DisplayName("[정상] 예약 실패 플로우: AVAILABLE → PENDING → CANCELLED → AVAILABLE")
+		@DisplayName("[정상] 예약 실패 플로우: AVAILABLE → PENDING → AVAILABLE")
 		void reservationFailureFlow() {
 			// Given
 			RoomTimeSlot slot = RoomTimeSlot.available(101L, LocalDate.now(), LocalTime.of(14, 0));
-			
+
 			// When: 예약 시작
 			slot.markAsPending(1001L);
 			
 			// When: 결제 실패로 취소
 			slot.cancel();
 			
-			// Then: CANCELLED 상태 확인
-			assertThat(slot.getStatus()).isEqualTo(SlotStatus.AVAILABLE);
-			
-			// When: 슬롯 복구
-			slot.restore();
-			
-			// Then: AVAILABLE 상태로 복구
+			// Then: 바로 AVAILABLE 상태로 복구됨
 			assertThat(slot.getStatus()).isEqualTo(SlotStatus.AVAILABLE);
 			assertThat(slot.getReservationId()).isNull();
 			assertThat(slot.isAvailable()).isTrue();

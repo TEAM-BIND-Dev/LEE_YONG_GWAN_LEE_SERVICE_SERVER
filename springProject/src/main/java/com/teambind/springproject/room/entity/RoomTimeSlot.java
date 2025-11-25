@@ -156,17 +156,6 @@ public class RoomTimeSlot {
 	}
 	
 	/**
-	 * 취소된 슬롯을 다시 예약 가능 상태로 복구한다.
-	 *
-	 * @throws InvalidSlotStateTransitionException 슬롯이 CANCELLED 상태가 아닌 경우
-	 */
-	public void restore() {
-		this.status = SlotStatus.AVAILABLE;
-		this.reservationId = null;
-		this.lastUpdated = LocalDateTime.now();
-	}
-	
-	/**
 	 * 슬롯을 휴무 상태로 전환한다.
 	 * <p>
 	 * 휴무일 설정 시 호출되며, AVAILABLE 상태의 슬롯만 CLOSED로 변경할 수 있다.
@@ -183,18 +172,31 @@ public class RoomTimeSlot {
 	}
 	
 	/**
-	 * 휴무 슬롯을 예약 가능 상태로 전환한다.
+	 * 슬롯을 예약 가능 상태로 전환한다.
 	 * <p>
-	 * 휴무일 해제 시 호출된다.
-	 *
-	 * @throws InvalidSlotStateTransitionException 슬롯이 CLOSED 상태가 아닌 경우
+	 * 다음 시나리오에서 호출된다:
+	 * - 휴무일 해제 시 (CLOSED → AVAILABLE)
+	 * - 환불 완료 시 (RESERVED → AVAILABLE)
+	 * - 결제 만료 시 (PENDING → AVAILABLE)
+	 * <p>
+	 * 이미 AVAILABLE 상태인 경우 멱등성(idempotent)을 보장하여 예외를 발생시키지 않는다.
 	 */
 	public void markAsAvailable() {
-		if (status != SlotStatus.CLOSED) {
+		// 이미 AVAILABLE이면 멱등성 보장 (환불 재시도 등)
+		if (status == SlotStatus.AVAILABLE) {
+			return;
+		}
+		
+		// RESERVED, PENDING, CLOSED → AVAILABLE 전이 허용
+		if (status != SlotStatus.RESERVED &&
+				status != SlotStatus.PENDING &&
+				status != SlotStatus.CLOSED) {
 			throw new InvalidSlotStateTransitionException(
 					status.name(), SlotStatus.AVAILABLE.name());
 		}
+
 		this.status = SlotStatus.AVAILABLE;
+		this.reservationId = null; // 예약 ID 초기화
 		this.lastUpdated = LocalDateTime.now();
 	}
 	

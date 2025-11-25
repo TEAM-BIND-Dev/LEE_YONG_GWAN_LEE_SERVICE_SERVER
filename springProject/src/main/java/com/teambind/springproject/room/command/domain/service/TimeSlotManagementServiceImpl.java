@@ -1,6 +1,7 @@
 package com.teambind.springproject.room.command.domain.service;
 
 import com.teambind.springproject.common.exceptions.domain.PolicyNotFoundException;
+import com.teambind.springproject.common.exceptions.domain.SlotNotAvailableException;
 import com.teambind.springproject.common.exceptions.domain.SlotNotFoundException;
 import com.teambind.springproject.room.domain.port.ClosedDateUpdateRequestPort;
 import com.teambind.springproject.room.domain.port.OperatingPolicyPort;
@@ -176,9 +177,8 @@ public class TimeSlotManagementServiceImpl implements TimeSlotManagementService 
 
 			log.error("Some slots not found: roomId={}, slotDate={}, missingTimes={}",
 					roomId, slotDate, missingTimes);
-			throw new IllegalStateException(
-					String.format("일부 슬롯을 찾을 수 없습니다. roomId=%d, slotDate=%s, missingTimes=%s",
-							roomId, slotDate, missingTimes)
+			throw new SlotNotFoundException(
+					roomId, slotDate.toString(), missingTimes.toString()
 			);
 		}
 
@@ -194,9 +194,8 @@ public class TimeSlotManagementServiceImpl implements TimeSlotManagementService 
 
 			log.error("Some slots are not available: roomId={}, slotDate={}, unavailable={}",
 					roomId, slotDate, unavailableInfo);
-			throw new IllegalStateException(
-					String.format("일부 슬롯을 예약할 수 없습니다. roomId=%d, slotDate=%s, unavailable=%s",
-							roomId, slotDate, unavailableInfo)
+			throw new SlotNotAvailableException(
+					unavailableInfo
 			);
 		}
 

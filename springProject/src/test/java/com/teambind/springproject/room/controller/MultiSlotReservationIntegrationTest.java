@@ -1,6 +1,8 @@
 package com.teambind.springproject.room.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.teambind.springproject.config.TestKafkaConfig;
+import com.teambind.springproject.config.TestRedisConfig;
 import com.teambind.springproject.room.command.dto.MultiSlotReservationRequest;
 import com.teambind.springproject.room.entity.RoomTimeSlot;
 import com.teambind.springproject.room.entity.enums.SlotStatus;
@@ -12,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -36,6 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@Import({TestKafkaConfig.class, TestRedisConfig.class})
 @Transactional
 class MultiSlotReservationIntegrationTest {
 
@@ -136,9 +140,9 @@ class MultiSlotReservationIntegrationTest {
 		mockMvc.perform(post("/api/v1/reservations/multi")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
-				.andExpect(status().is5xxServerError());
-
-		log.info("[Then] 예약 실패 응답 확인 (500 Internal Server Error)");
+				.andExpect(status().is4xxClientError());
+		
+		log.info("[Then] 예약 실패 응답 확인 (4xx Client Error)");
 
 		// 모든 슬롯이 원래 상태를 유지하는지 확인 (트랜잭션 롤백)
 		RoomTimeSlot secondSlot = slotRepository.findByRoomIdAndSlotDateAndSlotTime(
@@ -173,9 +177,9 @@ class MultiSlotReservationIntegrationTest {
 		mockMvc.perform(post("/api/v1/reservations/multi")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
-				.andExpect(status().is5xxServerError());
-
-		log.info("[Then] 예약 실패 응답 확인 (500 Internal Server Error)");
+				.andExpect(status().is4xxClientError());
+		
+		log.info("[Then] 예약 실패 응답 확인 (4xx Client Error)");
 
 		// 기존 슬롯들이 AVAILABLE 상태를 유지하는지 확인
 		RoomTimeSlot firstSlot = slotRepository.findByRoomIdAndSlotDateAndSlotTime(

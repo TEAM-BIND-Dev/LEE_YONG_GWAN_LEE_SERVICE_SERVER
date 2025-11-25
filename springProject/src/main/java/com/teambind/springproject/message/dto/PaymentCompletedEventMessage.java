@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 public class PaymentCompletedEventMessage {
 
 	private String topic;
+	
 	private String eventType;
 	private String paymentId;
 	private String reservationId;

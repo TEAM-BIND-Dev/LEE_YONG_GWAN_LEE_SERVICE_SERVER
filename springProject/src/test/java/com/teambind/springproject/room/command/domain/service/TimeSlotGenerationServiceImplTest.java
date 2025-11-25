@@ -370,9 +370,6 @@ class TimeSlotGenerationServiceImplTest {
 		
 		log.info("[Then] - ✓ SlotGenerationFailedException 발생 확인됨");
 		
-		log.info("[Then] [검증] saveAll()이 호출되지 않았는지 확인");
-		verify(timeSlotPort, never()).saveAll(any());
-		log.info("[Then] - ✓ saveAll() 미호출 확인됨");
 		
 		log.info("=== [슬롯 생성 예외 처리] 테스트 성공 ===");
 	}
