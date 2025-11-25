@@ -47,7 +47,6 @@ spring:
         enabled: false
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
-
   sql:
     init:
       mode: never

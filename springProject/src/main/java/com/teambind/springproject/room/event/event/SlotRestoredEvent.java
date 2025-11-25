@@ -20,12 +20,12 @@ public class SlotRestoredEvent extends Event {
 	private static final String TOPIC = "reservation-restored";
 	private static final String EVENT_TYPE = "SlotRestored";
 	
-	private Long reservationId;
+	private String reservationId;
 	private String restoreReason;
 	private LocalDateTime occurredAt;
-	
+
 	private SlotRestoredEvent(
-			Long reservationId,
+			String reservationId,
 			String restoreReason,
 			LocalDateTime occurredAt
 	) {
@@ -36,7 +36,7 @@ public class SlotRestoredEvent extends Event {
 	}
 	
 	public static SlotRestoredEvent of(
-			Long reservationId,
+			String reservationId,
 			String restoreReason
 	) {
 		return new SlotRestoredEvent(

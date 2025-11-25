@@ -29,14 +29,17 @@ public class SlotRestoredEventHandler implements EventHandler<SlotRestoredEvent>
 		log.info("Processing SlotRestoredEvent: reservationId={}, reason={}",
 				event.getReservationId(), event.getRestoreReason());
 		
+		// String → Long 변환
+		Long reservationId = Long.parseLong(event.getReservationId());
+
 		// reservationId로 모든 슬롯 조회
-		List<RoomTimeSlot> slots = slotRepository.findByReservationId(event.getReservationId());
-		
+		List<RoomTimeSlot> slots = slotRepository.findByReservationId(reservationId);
+
 		if (slots.isEmpty()) {
-			log.warn("No slots found for reservationId={}", event.getReservationId());
+			log.warn("No slots found for reservationId={}", reservationId);
 			return;
 		}
-		
+
 		int restoredCount = 0;
 		
 		// 모든 슬롯을 복구 상태로 변경
@@ -55,7 +58,7 @@ public class SlotRestoredEventHandler implements EventHandler<SlotRestoredEvent>
 		}
 		
 		log.info("SlotRestoredEvent processed: reservationId={}, restored {} of {} slots",
-				event.getReservationId(), restoredCount, slots.size());
+				reservationId, restoredCount, slots.size());
 	}
 	
 	@Override

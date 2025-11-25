@@ -31,6 +31,12 @@ import java.util.Objects;
 				@Index(name = "idx_room_date_time", columnList = "room_id,slot_date,slot_time"),
 				@Index(name = "idx_date_status", columnList = "slot_date,status"),
 				@Index(name = "idx_cleanup", columnList = "slot_date")
+		},
+		uniqueConstraints = {
+				@UniqueConstraint(
+						name = "uk_room_date_time",
+						columnNames = {"room_id", "slot_date", "slot_time"}
+				)
 		})
 public class RoomTimeSlot {
 	

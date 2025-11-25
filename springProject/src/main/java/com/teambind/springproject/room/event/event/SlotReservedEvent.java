@@ -23,17 +23,17 @@ public class SlotReservedEvent extends Event {
 	private static final String TOPIC = "reservation-reserved";
 	private static final String EVENT_TYPE = "SlotReserved";
 	
-	private Long roomId;
+	private String roomId;
 	private LocalDate slotDate;
 	private List<LocalTime> startTimes;
-	private Long reservationId;
+	private String reservationId;
 	private LocalDateTime occurredAt;
-	
+
 	private SlotReservedEvent(
-			Long roomId,
+			String roomId,
 			LocalDate slotDate,
 			List<LocalTime> startTimes,
-			Long reservationId,
+			String reservationId,
 			LocalDateTime occurredAt
 	) {
 		super(TOPIC, EVENT_TYPE);
@@ -43,12 +43,12 @@ public class SlotReservedEvent extends Event {
 		this.reservationId = reservationId;
 		this.occurredAt = occurredAt;
 	}
-	
+
 	public static SlotReservedEvent of(
-			Long roomId,
+			String roomId,
 			LocalDate slotDate,
 			List<LocalTime> startTimes,
-			Long reservationId
+			String reservationId
 	) {
 		return new SlotReservedEvent(
 				roomId,

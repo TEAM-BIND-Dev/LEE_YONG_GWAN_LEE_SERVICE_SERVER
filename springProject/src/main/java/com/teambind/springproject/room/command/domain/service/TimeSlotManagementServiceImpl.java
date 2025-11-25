@@ -103,10 +103,8 @@ public class TimeSlotManagementServiceImpl implements TimeSlotManagementService 
 		List<RoomTimeSlot> expiredSlots = timeSlotPort.findExpiredPendingSlots(PENDING_EXPIRATION_MINUTES);
 
 		for (RoomTimeSlot slot : expiredSlots) {
-			// 먼저 취소 처리
+			// PENDING → AVAILABLE 상태로 변경 및 reservationId 제거
 			slot.cancel();
-			// 그 다음 복구
-			slot.restore();
 		}
 
 		timeSlotPort.saveAll(expiredSlots);

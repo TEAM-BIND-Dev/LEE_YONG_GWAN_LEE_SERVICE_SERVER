@@ -69,13 +69,13 @@ public class ReservationApplicationService {
 
 		log.info("Slot marked as PENDING: roomId={}, slotDate={}, slotTime={}, reservationId={}",
 				request.roomId(), request.slotDate(), request.slotTime(), request.reservationId());
-
-		// 2. Kafka 이벤트 발행
+		
+		// 2. Kafka 이벤트 발행 (Long → String 변환)
 		SlotReservedEvent event = SlotReservedEvent.of(
-				request.roomId(),
+				request.roomId().toString(),
 				request.slotDate(),
 				List.of(request.slotTime()),
-				request.reservationId()
+				request.reservationId().toString()
 		);
 
 		try {
@@ -137,13 +137,13 @@ public class ReservationApplicationService {
 
 		log.info("Marked {} slots as PENDING: roomId={}, slotDate={}, reservationId={}",
 				reservedCount, request.roomId(), request.slotDate(), reservationId);
-
-		// 3. Kafka 이벤트 발행
+		
+		// 3. Kafka 이벤트 발행 (Long → String 변환)
 		SlotReservedEvent event = SlotReservedEvent.of(
-				request.roomId(),
+				request.roomId().toString(),
 				request.slotDate(),
 				request.slotTimes(),
-				reservationId
+				reservationId.toString()
 		);
 
 		try {

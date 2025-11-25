@@ -275,6 +275,8 @@ public enum RecurrencePattern {
 
 ### ADR 목록
 
+**기반 아키텍처**:
+
 1. **[ADR-001: MySQL 데이터베이스 선택](adr/001-database-selection.md)**
    - MariaDB 10.11 LTS 선택 이유
    - MySQL vs PostgreSQL vs MongoDB 비교
@@ -286,6 +288,28 @@ public enum RecurrencePattern {
 3. **[ADR-003: Hexagonal Architecture 적용](adr/003-hexagonal-architecture.md)**
    - Port/Adapter 패턴 적용
    - 도메인 격리 전략
+
+**개선 및 안정성**:
+
+4. **[ADR-004: Transactional Outbox Pattern](adr/004-transactional-outbox-pattern.md)**
+   - DB-Kafka 트랜잭션 일관성 보장
+   - Dual Write 문제 해결
+   - 정확히 한 번 발행 (Exactly-Once Delivery)
+
+5. **[ADR-005: Pessimistic Locking Strategy](adr/005-pessimistic-locking-strategy.md)**
+   - 단일 슬롯 예약 동시성 제어
+   - Lost Update 방지
+   - 단일/다중 슬롯 예약 전략 통일
+
+6. **[ADR-006: Event Publisher Refactoring](adr/006-event-publisher-refactoring.md)**
+   - instanceof 체인 개선 방향
+   - 테스트 강화를 통한 안정성 확보
+   - OCP 준수 전략 (조건부)
+
+7. **[ADR-007: Event Handler Architecture Alignment](adr/007-event-handler-architecture-alignment.md)**
+   - EventHandler의 Hexagonal Architecture 정합성
+   - Domain Service 활용 패턴
+   - 트랜잭션 원자성 보장
 
 ### 핵심 패턴
 

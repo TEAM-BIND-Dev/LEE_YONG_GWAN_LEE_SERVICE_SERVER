@@ -44,10 +44,7 @@ class TimeSlotGenerationServiceImplTest {
 	
 	@Mock
 	private OperatingPolicyPort operatingPolicyPort;
-	
-	@Mock
-	private PlaceInfoApiClient placeInfoApiClient;
-	
+
 	@InjectMocks
 	private TimeSlotGenerationServiceImpl service;
 	
@@ -61,15 +58,15 @@ class TimeSlotGenerationServiceImplTest {
 		roomId = 100L;
 		testDate = LocalDate.of(2025, 1, 20); // 월요일
 		slotUnit = SlotUnit.HALF_HOUR;
-		
+
 		// 월요일 09:00, 10:00 운영 정책
 		List<WeeklySlotTime> slotTimes = List.of(
 				WeeklySlotTime.of(DayOfWeek.MONDAY, LocalTime.of(9, 0)),
 				WeeklySlotTime.of(DayOfWeek.MONDAY, LocalTime.of(10, 0))
 		);
 		WeeklySlotSchedule schedule = WeeklySlotSchedule.of(slotTimes);
-		policy = RoomOperatingPolicy.create(roomId, schedule, RecurrencePattern.EVERY_WEEK, List.of());
-		
+		policy = RoomOperatingPolicy.create(roomId, schedule, RecurrencePattern.EVERY_WEEK, slotUnit, List.of());
+
 		log.info("=== 테스트 데이터 초기화 ===");
 		log.info("- roomId: {}", roomId);
 		log.info("- testDate: {} ({})", testDate, testDate.getDayOfWeek());
@@ -85,11 +82,8 @@ class TimeSlotGenerationServiceImplTest {
 		// Given
 		log.info("[Given] Mock 동작 설정");
 		when(operatingPolicyPort.findByRoomId(roomId)).thenReturn(Optional.of(policy));
-		log.info("[Given] - operatingPolicyPort.findByRoomId() -> 정책 반환");
-		
-		when(placeInfoApiClient.getSlotUnit(roomId)).thenReturn(slotUnit);
-		log.info("[Given] - placeInfoApiClient.getSlotUnit() -> {}", slotUnit);
-		
+		log.info("[Given] - operatingPolicyPort.findByRoomId() -> 정책 반환 (슬롯 단위: {})", slotUnit);
+
 		// 예상 슬롯: 월요일이므로 09:00, 09:30, 10:00, 10:30 (4개)
 		List<RoomTimeSlot> expectedSlots = List.of(
 				RoomTimeSlot.available(roomId, testDate, LocalTime.of(9, 0)),
@@ -120,11 +114,7 @@ class TimeSlotGenerationServiceImplTest {
 		verify(operatingPolicyPort, times(1)).findByRoomId(roomId);
 		log.info("[Then] - ✓ findByRoomId() 호출 확인됨");
 		
-		log.info("[Then] [검증3] placeInfoApiClient.getSlotUnit()이 1번 호출되었는지 확인");
-		verify(placeInfoApiClient, times(1)).getSlotUnit(roomId);
-		log.info("[Then] - ✓ getSlotUnit() 호출 확인됨");
-		
-		log.info("[Then] [검증4] timeSlotPort.saveAll()이 1번 호출되었는지 확인");
+		log.info("[Then] [검증3] timeSlotPort.saveAll()이 1번 호출되었는지 확인");
 		verify(timeSlotPort, times(1)).saveAll(any());
 		log.info("[Then] - ✓ saveAll() 호출 확인됨");
 		
@@ -221,30 +211,31 @@ class TimeSlotGenerationServiceImplTest {
 				room1Id,
 				WeeklySlotSchedule.of(List.of(WeeklySlotTime.of(DayOfWeek.MONDAY, LocalTime.of(9, 0)))),
 				RecurrencePattern.EVERY_WEEK,
+				slotUnit,
 				List.of()
 		);
 		RoomOperatingPolicy policy2 = RoomOperatingPolicy.create(
 				room2Id,
 				WeeklySlotSchedule.of(List.of(WeeklySlotTime.of(DayOfWeek.MONDAY, LocalTime.of(10, 0)))),
 				RecurrencePattern.EVERY_WEEK,
+				slotUnit,
 				List.of()
 		);
 		RoomOperatingPolicy policy3 = RoomOperatingPolicy.create(
 				room3Id,
 				WeeklySlotSchedule.of(List.of(WeeklySlotTime.of(DayOfWeek.MONDAY, LocalTime.of(11, 0)))),
 				RecurrencePattern.EVERY_WEEK,
+				slotUnit,
 				List.of()
 		);
-		
+
 		List<RoomOperatingPolicy> allPolicies = List.of(policy1, policy2, policy3);
 		when(operatingPolicyPort.findAll()).thenReturn(allPolicies);
 		log.info("[Given] - operatingPolicyPort.findAll() -> 3개 정책 반환");
-		
+
 		when(operatingPolicyPort.findByRoomId(room1Id)).thenReturn(Optional.of(policy1));
 		when(operatingPolicyPort.findByRoomId(room2Id)).thenReturn(Optional.of(policy2));
 		when(operatingPolicyPort.findByRoomId(room3Id)).thenReturn(Optional.of(policy3));
-		
-		when(placeInfoApiClient.getSlotUnit(any())).thenReturn(slotUnit);
 		
 		List<RoomTimeSlot> slotsPerRoom = List.of(
 				RoomTimeSlot.available(room1Id, testDate, LocalTime.of(9, 0)),
@@ -322,7 +313,6 @@ class TimeSlotGenerationServiceImplTest {
 		// Given
 		log.info("[Given] Mock 동작 설정");
 		when(operatingPolicyPort.findByRoomId(roomId)).thenReturn(Optional.of(policy));
-		when(placeInfoApiClient.getSlotUnit(roomId)).thenReturn(slotUnit);
 		
 		List<RoomTimeSlot> slotsPerDay = List.of(
 				RoomTimeSlot.available(roomId, testDate, LocalTime.of(9, 0)),
@@ -368,9 +358,9 @@ class TimeSlotGenerationServiceImplTest {
 		// Given
 		log.info("[Given] Mock 동작 설정");
 		when(operatingPolicyPort.findByRoomId(roomId)).thenReturn(Optional.of(policy));
-		when(placeInfoApiClient.getSlotUnit(roomId)).thenThrow(new RuntimeException("API 호출 실패"));
-		log.info("[Given] - placeInfoApiClient.getSlotUnit() -> 예외 발생");
-		
+		when(timeSlotPort.saveAll(any())).thenThrow(new RuntimeException("DB 저장 실패"));
+		log.info("[Given] - timeSlotPort.saveAll() -> 예외 발생");
+
 		// When & Then
 		log.info("[When & Then] generateSlotsForDate() 호출 시 SlotGenerationFailedException 발생");
 		log.info("[When & Then] - 파라미터: roomId={}, date={}", roomId, testDate);
@@ -403,18 +393,21 @@ class TimeSlotGenerationServiceImplTest {
 				room1Id,
 				WeeklySlotSchedule.of(List.of(WeeklySlotTime.of(DayOfWeek.MONDAY, LocalTime.of(9, 0)))),
 				RecurrencePattern.EVERY_WEEK,
+				slotUnit,
 				List.of()
 		);
 		RoomOperatingPolicy policy2 = RoomOperatingPolicy.create(
 				room2Id,
 				WeeklySlotSchedule.of(List.of(WeeklySlotTime.of(DayOfWeek.MONDAY, LocalTime.of(10, 0)))),
 				RecurrencePattern.EVERY_WEEK,
+				slotUnit,
 				List.of()
 		);
 		RoomOperatingPolicy policy3 = RoomOperatingPolicy.create(
 				room3Id,
 				WeeklySlotSchedule.of(List.of(WeeklySlotTime.of(DayOfWeek.MONDAY, LocalTime.of(11, 0)))),
 				RecurrencePattern.EVERY_WEEK,
+				slotUnit,
 				List.of()
 		);
 		
@@ -423,14 +416,12 @@ class TimeSlotGenerationServiceImplTest {
 		
 		// Room1: 성공
 		when(operatingPolicyPort.findByRoomId(room1Id)).thenReturn(Optional.of(policy1));
-		when(placeInfoApiClient.getSlotUnit(room1Id)).thenReturn(slotUnit);
 		
 		// Room2: 실패 (정책 없음)
 		when(operatingPolicyPort.findByRoomId(room2Id)).thenReturn(Optional.empty());
 		
 		// Room3: 성공
 		when(operatingPolicyPort.findByRoomId(room3Id)).thenReturn(Optional.of(policy3));
-		when(placeInfoApiClient.getSlotUnit(room3Id)).thenReturn(slotUnit);
 		
 		List<RoomTimeSlot> slotsPerRoom = List.of(
 				RoomTimeSlot.available(room1Id, testDate, LocalTime.of(9, 0)),

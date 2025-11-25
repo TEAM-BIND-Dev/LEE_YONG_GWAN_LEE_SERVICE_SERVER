@@ -31,30 +31,28 @@ public class SlotReservedEventMessage {
 
 	/**
 	 * SlotReservedEvent로부터 메시지 DTO를 생성한다.
-	 * Long ID → String ID 변환
 	 */
 	public static SlotReservedEventMessage from(SlotReservedEvent event) {
 		return new SlotReservedEventMessage(
 				event.getTopic(),
 				event.getEventType(),
-				event.getRoomId() != null ? event.getRoomId().toString() : null,
+				event.getRoomId(),
 				event.getSlotDate(),
 				event.getStartTimes(),
-				event.getReservationId() != null ? event.getReservationId().toString() : null,
+				event.getReservationId(),
 				event.getOccurredAt()
 		);
 	}
 
 	/**
 	 * 메시지 DTO를 SlotReservedEvent로 변환한다.
-	 * String ID → Long ID 변환
 	 */
 	public SlotReservedEvent toEvent() {
 		return SlotReservedEvent.of(
-				roomId != null ? Long.parseLong(roomId) : null,
+				roomId,
 				slotDate,
 				startTimes,
-				reservationId != null ? Long.parseLong(reservationId) : null
+				reservationId
 		);
 	}
 }

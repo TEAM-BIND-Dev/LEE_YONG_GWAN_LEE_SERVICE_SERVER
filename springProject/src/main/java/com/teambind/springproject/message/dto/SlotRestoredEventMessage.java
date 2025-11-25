@@ -26,13 +26,12 @@ public class SlotRestoredEventMessage {
 
 	/**
 	 * SlotRestoredEvent로부터 메시지 DTO를 생성한다.
-	 * Long ID → String ID 변환
 	 */
 	public static SlotRestoredEventMessage from(SlotRestoredEvent event) {
 		return new SlotRestoredEventMessage(
 				event.getTopic(),
 				event.getEventType(),
-				event.getReservationId() != null ? event.getReservationId().toString() : null,
+				event.getReservationId(),
 				event.getRestoreReason(),
 				event.getOccurredAt()
 		);
@@ -40,11 +39,10 @@ public class SlotRestoredEventMessage {
 
 	/**
 	 * 메시지 DTO를 SlotRestoredEvent로 변환한다.
-	 * String ID → Long ID 변환
 	 */
 	public SlotRestoredEvent toEvent() {
 		return SlotRestoredEvent.of(
-				reservationId != null ? Long.parseLong(reservationId) : null,
+				reservationId,
 				restoreReason
 		);
 	}
