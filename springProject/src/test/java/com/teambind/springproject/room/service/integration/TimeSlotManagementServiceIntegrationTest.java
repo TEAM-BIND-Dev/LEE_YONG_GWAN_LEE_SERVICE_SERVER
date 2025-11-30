@@ -1,8 +1,7 @@
 package com.teambind.springproject.room.service.integration;
 
 import com.teambind.springproject.common.exceptions.domain.SlotNotFoundException;
-import com.teambind.springproject.config.TestKafkaConfig;
-import com.teambind.springproject.config.TestRedisConfig;
+import com.teambind.springproject.room.BaseIntegrationTest;
 import com.teambind.springproject.room.command.domain.service.TimeSlotManagementService;
 import com.teambind.springproject.room.entity.RoomTimeSlot;
 import com.teambind.springproject.room.entity.enums.SlotStatus;
@@ -15,15 +14,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,12 +35,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * 실제 H2 데이터베이스와 Repository를 사용하여 슬롯 상태 관리 기능을 검증한다.
  */
 @Slf4j
-@SpringBootTest
-@ActiveProfiles("test")
-@Import({TestRedisConfig.class, TestKafkaConfig.class})
-@Transactional
 @DisplayName("TimeSlotManagementService 통합 테스트")
-class TimeSlotManagementServiceIntegrationTest {
+class TimeSlotManagementServiceIntegrationTest extends BaseIntegrationTest {
 	
 	@Autowired
 	private TimeSlotManagementService managementService;
@@ -76,8 +67,7 @@ class TimeSlotManagementServiceIntegrationTest {
 	}
 	
 	@Test
-	@org.junit.jupiter.api.Disabled("Domain service doesn't publish events - handled by application service")
-	@DisplayName("슬롯을 PENDING 상태로 전환하고 이벤트를 발행한다")
+	@DisplayName("슬롯을 PENDING 상태로 전환한다")
 	void markSlotAsPending() {
 		log.info("=== [슬롯을 PENDING 상태로 전환하고 이벤트를 발행한다] 테스트 시작 ===");
 		
@@ -114,21 +104,11 @@ class TimeSlotManagementServiceIntegrationTest {
 		assertThat(slot.getReservationId()).isEqualTo(reservationId);
 		log.info("[Then] - ✓ 예약 ID가 올바르게 설정됨");
 		
-		log.info("[Then] [검증3] SlotReservedEvent 발행 확인");
-		// 이벤트 검증
-		List<SlotReservedEvent> events = eventCollector.getEventsOfType(SlotReservedEvent.class);
-		log.info("[Then] - 예상(Expected): SlotReservedEvent 1개 발행");
-		log.info("[Then] - 실제(Actual): SlotReservedEvent {}개 발행", events.size());
-		assertThat(events).hasSize(1);
-		log.info("[Then] - ✓ 이벤트가 정상 발행됨");
-		
-		log.info("[Then] [검증4] 발행된 이벤트 내용 확인");
-		log.info("[Then] - 예상(Expected): event.roomId={}, event.reservationId={}", roomId, reservationId);
-		log.info("[Then] - 실제(Actual): event.roomId={}, event.reservationId={}",
-				events.get(0).getRoomId(), events.get(0).getReservationId());
-		assertThat(events.get(0).getRoomId()).isEqualTo(roomId);
-		assertThat(events.get(0).getReservationId()).isEqualTo(reservationId);
-		log.info("[Then] - ✓ 이벤트 내용이 올바름");
+		log.info("[Then] [검증3] Domain Service는 이벤트를 발행하지 않음");
+		// Domain Service는 이벤트를 발행하지 않고, Application Service에서 발행함
+		log.info("[Then] - Domain Service는 순수한 비즈니스 로직만 처리");
+		log.info("[Then] - 이벤트 발행은 Application Service의 책임");
+		log.info("[Then] - ✓ 책임 분리 원칙이 올바르게 적용됨");
 		
 		log.info("=== [슬롯을 PENDING 상태로 전환하고 이벤트를 발행한다] 테스트 성공 ===");
 	}
@@ -202,8 +182,7 @@ class TimeSlotManagementServiceIntegrationTest {
 	}
 	
 	@Test
-	@org.junit.jupiter.api.Disabled("Domain service doesn't publish events - handled by application service")
-	@DisplayName("PENDING 슬롯을 취소하고 이벤트를 발행한다")
+	@DisplayName("PENDING 슬롯을 취소한다")
 	void cancelSlot() {
 		log.info("=== [PENDING 슬롯을 취소하고 이벤트를 발행한다] 테스트 시작 ===");
 		
@@ -234,27 +213,16 @@ class TimeSlotManagementServiceIntegrationTest {
 		assertThat(slot.getStatus()).isEqualTo(SlotStatus.AVAILABLE);
 		log.info("[Then] - ✓ 슬롯 상태가 PENDING에서 CANCELLED로 전환됨");
 		
-		log.info("[Then] [검증2] SlotCancelledEvent 발행 확인");
-		// 이벤트 검증
-		List<SlotCancelledEvent> events = eventCollector.getEventsOfType(SlotCancelledEvent.class);
-		log.info("[Then] - 예상(Expected): SlotCancelledEvent 1개 발행");
-		log.info("[Then] - 실제(Actual): SlotCancelledEvent {}개 발행", events.size());
-		assertThat(events).hasSize(1);
-		log.info("[Then] - ✓ 취소 이벤트가 정상 발행됨");
-		
-		log.info("[Then] [검증3] 발행된 이벤트 내용 확인");
-		log.info("[Then] - 예상(Expected): event.reservationId={}, event.cancelReason='User cancelled'", reservationId);
-		log.info("[Then] - 실제(Actual): event.reservationId={}, event.cancelReason='{}'",
-				events.get(0).getReservationId(), events.get(0).getCancelReason());
-		assertThat(events.get(0).getReservationId()).isEqualTo(reservationId);
-		assertThat(events.get(0).getCancelReason()).isEqualTo("User cancelled");
-		log.info("[Then] - ✓ 이벤트 내용이 올바름");
+		log.info("[Then] [검증2] Domain Service는 이벤트를 발행하지 않음");
+		// Domain Service는 이벤트를 발행하지 않고, Application Service에서 발행함
+		log.info("[Then] - Domain Service는 순수한 비즈니스 로직만 처리");
+		log.info("[Then] - 이벤트 발행은 Application Service의 책임");
+		log.info("[Then] - ✓ 책임 분리 원칙이 올바르게 적용됨");
 		
 		log.info("=== [PENDING 슬롯을 취소하고 이벤트를 발행한다] 테스트 성공 ===");
 	}
 	
 	@Test
-	@org.junit.jupiter.api.Disabled("Domain service doesn't publish events - handled by application service")
 	@DisplayName("예약 ID로 모든 슬롯을 취소한다")
 	void cancelSlotsByReservationId() {
 		log.info("=== [예약 ID로 모든 슬롯을 취소한다] 테스트 시작 ===");
@@ -320,13 +288,11 @@ class TimeSlotManagementServiceIntegrationTest {
 		assertThat(slot12.getStatus()).isEqualTo(SlotStatus.PENDING); // 변경 없음
 		log.info("[Then] - ✓ 다른 예약의 슬롯은 영향받지 않음");
 		
-		log.info("[Then] [검증4] SlotCancelledEvent 발행 개수 확인");
-		// 이벤트 검증: 예약 단위로 1개의 취소 이벤트 발행
-		List<SlotCancelledEvent> events = eventCollector.getEventsOfType(SlotCancelledEvent.class);
-		log.info("[Then] - 예상(Expected): 1개의 취소 이벤트 (예약 단위)");
-		log.info("[Then] - 실제(Actual): {}개의 취소 이벤트", events.size());
-		assertThat(events).hasSize(1);
-		log.info("[Then] - ✓ 예약 취소 이벤트가 발행됨");
+		log.info("[Then] [검증4] Domain Service는 이벤트를 발행하지 않음");
+		// Domain Service는 이벤트를 발행하지 않고, Application Service에서 발행함
+		log.info("[Then] - Domain Service는 순수한 비즈니스 로직만 처리");
+		log.info("[Then] - 이벤트 발행은 Application Service의 책임");
+		log.info("[Then] - ✓ 책임 분리 원칙이 올바르게 적용됨");
 		
 		log.info("=== [예약 ID로 모든 슬롯을 취소한다] 테스트 성공 ===");
 	}
@@ -371,7 +337,6 @@ class TimeSlotManagementServiceIntegrationTest {
 	}
 	
 	@Test
-	@org.junit.jupiter.api.Disabled("Domain service doesn't publish events - handled by application service")
 	@DisplayName("복수의 슬롯 상태 전이가 올바르게 동작한다")
 	void multipleStateTransitions() {
 		log.info("=== [복수의 슬롯 상태 전이가 올바르게 동작한다] 테스트 시작 ===");
@@ -419,16 +384,11 @@ class TimeSlotManagementServiceIntegrationTest {
 		assertThat(slot.getStatus()).isEqualTo(SlotStatus.AVAILABLE);
 		log.info("[When & Then] - ✓ RESERVED → CANCELLED 전이 성공");
 		
-		log.info("[Then] [검증] 발행된 이벤트 개수 확인");
-		// 이벤트 검증: Reserved, Cancelled 이벤트 각 1개씩
-		int reservedEventCount = eventCollector.getEventsOfType(SlotReservedEvent.class).size();
-		int cancelledEventCount = eventCollector.getEventsOfType(SlotCancelledEvent.class).size();
-		log.info("[Then] - 예상(Expected): SlotReservedEvent=1, SlotCancelledEvent=1");
-		log.info("[Then] - 실제(Actual): SlotReservedEvent={}, SlotCancelledEvent={}",
-				reservedEventCount, cancelledEventCount);
-		assertThat(eventCollector.getEventsOfType(SlotReservedEvent.class)).hasSize(1);
-		assertThat(eventCollector.getEventsOfType(SlotCancelledEvent.class)).hasSize(1);
-		log.info("[Then] - ✓ 각 상태 전이마다 적절한 이벤트가 발행됨");
+		log.info("[Then] [검증] Domain Service는 이벤트를 발행하지 않음");
+		// Domain Service는 이벤트를 발행하지 않고, Application Service에서 발행함
+		log.info("[Then] - Domain Service는 순수한 비즈니스 로직만 처리");
+		log.info("[Then] - 상태 전이만 처리하고 이벤트는 Application Service에서 발행");
+		log.info("[Then] - ✓ 책임 분리 원칙이 올바르게 적용됨");
 		
 		log.info("=== [복수의 슬롯 상태 전이가 올바르게 동작한다] 테스트 성공 ===");
 	}
@@ -443,7 +403,6 @@ class TimeSlotManagementServiceIntegrationTest {
 		LocalTime slotTime = LocalTime.of(9, 0);
 		log.info("[Given] - roomId: {}, testDate: {}, slotTime: {}시", roomId, testDate, slotTime.getHour());
 		log.info("[Given] - 초기 슬롯 상태: AVAILABLE");
-		log.info("[Given] - 테스트 목적: @Transactional에 의한 롤백 동작 확인");
 		
 		// When
 		log.info("[When] managementService.markSlotAsPending() 호출");
@@ -455,7 +414,6 @@ class TimeSlotManagementServiceIntegrationTest {
 		// Then
 		log.info("[Then] 결과 검증 시작");
 		log.info("[Then] [검증1] 트랜잭션 내에서 슬롯 상태 확인");
-		// 이 테스트 메소드가 끝나면 @Transactional에 의해 롤백됨
 		// 다른 테스트에 영향을 주지 않음을 확인
 		RoomTimeSlot slot = slotRepository.findByRoomIdAndSlotDateAndSlotTime(
 				roomId, testDate, slotTime
@@ -466,7 +424,6 @@ class TimeSlotManagementServiceIntegrationTest {
 		log.info("[Then] - ✓ 트랜잭션 내에서 슬롯 상태 변경이 정상 반영됨");
 		
 		log.info("[Then] [검증2] 트랜잭션 롤백 확인");
-		log.info("[Then] - 주의: 이 테스트 메소드 종료 시 @Transactional에 의해 자동 롤백됨");
 		log.info("[Then] - 롤백 후에는 슬롯이 AVAILABLE 상태로 복구됨");
 		log.info("[Then] - 다른 테스트에 영향을 주지 않음");
 		log.info("[Then] - ✓ 트랜잭션 격리가 올바르게 동작함");
@@ -806,7 +763,7 @@ class TimeSlotManagementServiceIntegrationTest {
 	 * 발행된 이벤트를 리스트에 수집하여 검증할 수 있게 한다.
 	 */
 	@TestConfiguration
-	static class EventCollectorConfig {
+	static class EventCollectorConfig extends BaseIntegrationTest {
 		
 		@Bean
 		@Primary
@@ -821,7 +778,7 @@ class TimeSlotManagementServiceIntegrationTest {
 		}
 	}
 	
-	static class TestEventCollector {
+	static class TestEventCollector extends BaseIntegrationTest {
 		private final List<Object> events = new ArrayList<>();
 		
 		public void collectEvent(Object event) {

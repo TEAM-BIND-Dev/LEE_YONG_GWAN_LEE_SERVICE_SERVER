@@ -2,12 +2,21 @@ spring:
   profiles:
     active: test
 
+  # 빈 오버라이드 허용
+  main:
+    allow-bean-definition-overriding: true
+
   # Kafka, Redis 자동 설정 비활성화
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
       - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+
+  # 테스트 환경에서 스케줄링 비활성화
+  task:
+    scheduling:
+      enabled: false
 
   datasource:
     driver-class-name: org.h2.Driver

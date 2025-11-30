@@ -1,7 +1,6 @@
 package com.teambind.springproject.room.controller;
 
-import com.teambind.springproject.config.TestKafkaConfig;
-import com.teambind.springproject.config.TestRedisConfig;
+import com.teambind.springproject.room.BaseIntegrationTest;
 import com.teambind.springproject.room.entity.RoomOperatingPolicy;
 import com.teambind.springproject.room.repository.RoomOperatingPolicyRepository;
 import com.teambind.springproject.room.repository.RoomTimeSlotRepository;
@@ -12,12 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -33,13 +28,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * - API 요청 → 운영 정책 저장 → 이벤트 발행 → 슬롯 생성
  * - 전체 플로우 검증
  */
-@SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
-@Import({TestKafkaConfig.class, TestRedisConfig.class})
-@Transactional
-@org.junit.jupiter.api.Disabled("Payload null error in event publishing - needs investigation of Event/EventMessage serialization")
-class RoomSetupIntegrationTest {
+@DisplayName("룸 초기 설정 통합 테스트")
+class RoomSetupIntegrationTest extends BaseIntegrationTest {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -124,18 +115,21 @@ class RoomSetupIntegrationTest {
 				      "startTimes": ["09:00"],
 				      "recurrencePattern": "EVERY_WEEK"
 				    }
-				  ]
+				  ],
+				  "slotUnit": "HOUR"
 				}
 				""";
 
 		String setupResponse = mockMvc.perform(post("/api/rooms/setup")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(requestBody))
+				.andExpect(status().isAccepted())
 				.andReturn()
 				.getResponse()
 				.getContentAsString();
 
-		String requestId = setupResponse.split("\"requestId\":\"")[1].split("\"")[0];
+		// Parse JSON response properly using JsonPath
+		String requestId = com.jayway.jsonpath.JsonPath.read(setupResponse, "$.requestId");
 
 		// When: GET /api/rooms/setup/{requestId}/status
 		mockMvc.perform(get("/api/rooms/setup/" + requestId + "/status"))

@@ -1,7 +1,6 @@
 package com.teambind.springproject.room.infrastructure.persistence;
 
-import com.teambind.springproject.config.TestKafkaConfig;
-import com.teambind.springproject.config.TestRedisConfig;
+import com.teambind.springproject.room.BaseIntegrationTest;
 import com.teambind.springproject.room.domain.port.TimeSlotPort;
 import com.teambind.springproject.room.entity.RoomTimeSlot;
 import com.teambind.springproject.room.entity.enums.SlotStatus;
@@ -10,10 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -29,12 +24,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Port 인터페이스 구현이 올바르게 동작하는지 검증한다.
  */
 @Slf4j
-@SpringBootTest
-@ActiveProfiles("test")
-@Import({TestRedisConfig.class, TestKafkaConfig.class})
-@Transactional
 @DisplayName("TimeSlotJpaAdapter 통합 테스트")
-class TimeSlotJpaAdapterIntegrationTest {
+class TimeSlotJpaAdapterIntegrationTest extends BaseIntegrationTest {
 	
 	@Autowired
 	private TimeSlotPort timeSlotPort;

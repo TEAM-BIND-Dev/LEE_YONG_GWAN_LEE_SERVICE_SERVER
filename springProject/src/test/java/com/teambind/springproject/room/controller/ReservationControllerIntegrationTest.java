@@ -1,8 +1,7 @@
 package com.teambind.springproject.room.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.teambind.springproject.config.TestKafkaConfig;
-import com.teambind.springproject.config.TestRedisConfig;
+import com.teambind.springproject.room.BaseIntegrationTest;
 import com.teambind.springproject.room.command.dto.SlotReservationRequest;
 import com.teambind.springproject.room.entity.RoomTimeSlot;
 import com.teambind.springproject.room.entity.enums.SlotStatus;
@@ -13,12 +12,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -34,13 +29,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * 실제 HTTP 요청을 MockMvc로 시뮬레이션하고 DB 상태를 검증한다.
  */
 @Slf4j
-@SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
-@Import({TestRedisConfig.class, TestKafkaConfig.class})
-@Transactional
 @DisplayName("ReservationController 통합 테스트")
-class ReservationControllerIntegrationTest {
+class ReservationControllerIntegrationTest extends BaseIntegrationTest {
 
 	@Autowired
 	private MockMvc mockMvc;

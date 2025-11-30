@@ -1,8 +1,7 @@
 package com.teambind.springproject.room.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.teambind.springproject.config.TestKafkaConfig;
-import com.teambind.springproject.config.TestRedisConfig;
+import com.teambind.springproject.room.BaseIntegrationTest;
 import com.teambind.springproject.room.command.dto.MultiSlotReservationRequest;
 import com.teambind.springproject.room.entity.RoomTimeSlot;
 import com.teambind.springproject.room.entity.enums.SlotStatus;
@@ -13,12 +12,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -36,12 +31,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Pessimistic Lock을 사용한 동시성 제어를 검증한다.
  */
 @Slf4j
-@SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
-@Import({TestKafkaConfig.class, TestRedisConfig.class})
-@Transactional
-class MultiSlotReservationIntegrationTest {
+@DisplayName("다중 슬롯 예약 통합 테스트")
+class MultiSlotReservationIntegrationTest extends BaseIntegrationTest {
 
 	@Autowired
 	private MockMvc mockMvc;
