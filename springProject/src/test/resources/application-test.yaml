@@ -1,7 +1,4 @@
 spring:
-  profiles:
-    active: test
-
   # 빈 오버라이드 허용
   main:
     allow-bean-definition-overriding: true
@@ -18,12 +15,14 @@ spring:
     scheduling:
       enabled: false
 
+  # H2 데이터베이스 설정
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     password:
 
+  # JPA 설정
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -33,6 +32,7 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.H2Dialect
 
+  # H2 콘솔 비활성화
   h2:
     console:
       enabled: false
@@ -43,9 +43,17 @@ spring:
       repositories:
         enabled: false
 
+  # SQL 초기화 설정 (ShedLock 테이블 생성)
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
+# 서버 설정
 server:
   port: 0
 
+# 외부 API 설정
 external:
   api:
     place-info:
@@ -53,6 +61,7 @@ external:
       connect-timeout: 5000
       read-timeout: 5000
 
+# Room 모듈 설정
 room:
   timeSlot:
     pending:

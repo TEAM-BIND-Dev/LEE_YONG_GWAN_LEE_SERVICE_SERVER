@@ -23,10 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @SpringBootTest
 @ActiveProfiles("test")
-@TestPropertySource(properties = {
-        "room.timeSlot.pending.expiration.minutes=30",
-        "room.timeSlot.rollingWindow.days=30"
-})
 @Import({TestRedisConfig.class, TestKafkaConfig.class, TestShedLockConfig.class})
 @Transactional
 public abstract class BaseIntegrationTest {
