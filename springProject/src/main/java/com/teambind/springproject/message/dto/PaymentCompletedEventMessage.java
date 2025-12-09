@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class PaymentCompletedEventMessage {
-
+	
 	private String topic;
 	
 	private String eventType;
@@ -26,7 +26,7 @@ public class PaymentCompletedEventMessage {
 	private Long amount;
 	private String method;
 	private String paidAt;
-
+	
 	/**
 	 * 메시지 DTO를 PaymentCompletedEvent로 변환한다.
 	 * 결제 완료 시 해당 예약의 슬롯을 확정한다.
