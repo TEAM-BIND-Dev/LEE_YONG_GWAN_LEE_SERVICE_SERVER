@@ -195,7 +195,7 @@ public class RoomTimeSlot {
 			throw new InvalidSlotStateTransitionException(
 					status.name(), SlotStatus.AVAILABLE.name());
 		}
-
+		
 		this.status = SlotStatus.AVAILABLE;
 		this.reservationId = null; // 예약 ID 초기화
 		this.lastUpdated = LocalDateTime.now();
