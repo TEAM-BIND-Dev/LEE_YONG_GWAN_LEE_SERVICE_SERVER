@@ -5,8 +5,6 @@ import com.teambind.springproject.room.BaseIntegrationTest;
 import com.teambind.springproject.room.command.domain.service.TimeSlotManagementService;
 import com.teambind.springproject.room.entity.RoomTimeSlot;
 import com.teambind.springproject.room.entity.enums.SlotStatus;
-import com.teambind.springproject.room.event.event.SlotCancelledEvent;
-import com.teambind.springproject.room.event.event.SlotReservedEvent;
 import com.teambind.springproject.room.repository.RoomTimeSlotRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -177,7 +175,7 @@ class TimeSlotManagementServiceIntegrationTest extends BaseIntegrationTest {
 		log.info("[Then] - 실제(Actual): reservationId={}", slot.getReservationId());
 		assertThat(slot.getReservationId()).isEqualTo(reservationId);
 		log.info("[Then] - ✓ 예약 ID가 유지됨");
-
+		
 		log.info("=== [PENDING 슬롯을 확정하고 이벤트를 발행한다] 테스트 성공 ===");
 	}
 	
@@ -430,50 +428,50 @@ class TimeSlotManagementServiceIntegrationTest extends BaseIntegrationTest {
 		
 		log.info("=== [트랜잭션 롤백이 정상적으로 동작한다] 테스트 성공 ===");
 	}
-
+	
 	@Test
 	@DisplayName("[#57] 설정값이 Spring Context를 통해 주입되어야 함")
 	void configurationValueInjectedFromSpringContext(@Value("${room.timeSlot.pending.expiration.minutes}") int expirationMinutes) {
 		log.info("=== [#57] [설정값 Spring Context 주입 검증] 테스트 시작 ===");
-
+		
 		// Then: application.yaml의 설정값이 주입됨
 		log.info("[Then] application.yaml의 설정값 확인");
 		log.info("[Then] - 설정 키: room.timeSlot.pending.expiration.minutes");
 		log.info("[Then] - 예상값: 30 (application.yaml)");
 		log.info("[Then] - 실제값: {}", expirationMinutes);
-
+		
 		assertThat(expirationMinutes).isEqualTo(30);
 		log.info("[Then] - ✓ 설정값이 Spring Context를 통해 올바르게 주입됨");
-
+		
 		// And: Service가 해당 설정값을 사용하는지 확인
 		Integer serviceValue = (Integer) ReflectionTestUtils.getField(managementService, "pendingExpirationMinutes");
 		log.info("[Then] Service 필드값 확인");
 		log.info("[Then] - 예상값: 30");
 		log.info("[Then] - 실제값: {}", serviceValue);
-
+		
 		assertThat(serviceValue).isEqualTo(30);
 		log.info("[Then] - ✓ Service에 설정값이 올바르게 주입됨");
-
+		
 		log.info("=== [#57] [설정값 Spring Context 주입 검증] 테스트 성공 ===");
 	}
-
+	
 	@Test
 	@DisplayName("[#57] 설정 시간(30분) 이상 경과한 PENDING 슬롯이 복구되어야 함")
 	void expiredSlotsShouldBeRestoredAfterConfiguredTime() {
 		log.info("=== [#57] [만료 시간 경과 슬롯 복구 검증] 테스트 시작 ===");
-
+		
 		// Given: PENDING 슬롯 생성
 		log.info("[Given] 테스트 데이터 준비");
 		LocalTime slotTime = LocalTime.of(9, 0);
 		managementService.markSlotAsPending(roomId, testDate, slotTime, reservationId);
 		log.info("[Given] - 슬롯 생성: roomId={}, testDate={}, slotTime={}시", roomId, testDate, slotTime.getHour());
 		log.info("[Given] - 상태: AVAILABLE → PENDING");
-
+		
 		// DB에서 슬롯을 다시 조회하여 lastUpdated를 31분 전으로 변경
 		RoomTimeSlot slot = slotRepository.findByRoomIdAndSlotDateAndSlotTime(
 				roomId, testDate, slotTime
 		).orElseThrow();
-
+		
 		// ReflectionTestUtils로 lastUpdated 필드를 31분 전으로 변경
 		LocalDateTime thirtyOneMinutesAgo = LocalDateTime.now().minusMinutes(31);
 		ReflectionTestUtils.setField(slot, "lastUpdated", thirtyOneMinutesAgo);
@@ -481,23 +479,23 @@ class TimeSlotManagementServiceIntegrationTest extends BaseIntegrationTest {
 		log.info("[Given] - lastUpdated를 31분 전으로 변경: {}", thirtyOneMinutesAgo);
 		log.info("[Given] - 설정된 만료 시간: 30분");
 		log.info("[Given] - 이 슬롯은 만료 대상임 (31분 > 30분)");
-
+		
 		eventCollector.clear();
-
+		
 		// When: 만료 슬롯 복구 실행
 		log.info("[When] managementService.restoreExpiredPendingSlots() 호출");
 		int restoredCount = managementService.restoreExpiredPendingSlots();
 		log.info("[When] - 반환값: {}개 슬롯 복구됨", restoredCount);
-
+		
 		// Then: 슬롯이 복구되어야 함
 		log.info("[Then] 결과 검증 시작");
-
+		
 		log.info("[Then] [검증1] 복구된 슬롯 개수 확인");
 		log.info("[Then] - 예상: 1개 (31분 경과 슬롯)");
 		log.info("[Then] - 실제: {}개", restoredCount);
 		assertThat(restoredCount).isEqualTo(1);
 		log.info("[Then] - ✓ 만료된 슬롯이 복구됨");
-
+		
 		log.info("[Then] [검증2] 슬롯 상태 확인");
 		RoomTimeSlot restoredSlot = slotRepository.findByRoomIdAndSlotDateAndSlotTime(
 				roomId, testDate, slotTime
@@ -506,33 +504,33 @@ class TimeSlotManagementServiceIntegrationTest extends BaseIntegrationTest {
 		log.info("[Then] - 실제: {}", restoredSlot.getStatus());
 		assertThat(restoredSlot.getStatus()).isEqualTo(SlotStatus.AVAILABLE);
 		log.info("[Then] - ✓ 슬롯이 AVAILABLE 상태로 복구됨");
-
+		
 		log.info("[Then] [검증3] reservationId 초기화 확인");
 		log.info("[Then] - 예상: null");
 		log.info("[Then] - 실제: {}", restoredSlot.getReservationId());
 		assertThat(restoredSlot.getReservationId()).isNull();
 		log.info("[Then] - ✓ reservationId가 초기화됨");
-
+		
 		log.info("=== [#57] [만료 시간 경과 슬롯 복구 검증] 테스트 성공 ===");
 	}
-
+	
 	@Test
 	@DisplayName("[#57] 설정 시간(30분) 이내의 PENDING 슬롯은 복구되지 않아야 함")
 	void nonExpiredSlotsShouldNotBeRestored() {
 		log.info("=== [#57] [만료 시간 이내 슬롯 유지 검증] 테스트 시작 ===");
-
+		
 		// Given: PENDING 슬롯 생성
 		log.info("[Given] 테스트 데이터 준비");
 		LocalTime slotTime = LocalTime.of(10, 0);
 		managementService.markSlotAsPending(roomId, testDate, slotTime, reservationId);
 		log.info("[Given] - 슬롯 생성: roomId={}, testDate={}, slotTime={}시", roomId, testDate, slotTime.getHour());
 		log.info("[Given] - 상태: AVAILABLE → PENDING");
-
+		
 		// DB에서 슬롯을 다시 조회하여 lastUpdated를 25분 전으로 변경
 		RoomTimeSlot slot = slotRepository.findByRoomIdAndSlotDateAndSlotTime(
 				roomId, testDate, slotTime
 		).orElseThrow();
-
+		
 		// ReflectionTestUtils로 lastUpdated 필드를 25분 전으로 변경
 		LocalDateTime twentyFiveMinutesAgo = LocalDateTime.now().minusMinutes(25);
 		ReflectionTestUtils.setField(slot, "lastUpdated", twentyFiveMinutesAgo);
@@ -540,23 +538,23 @@ class TimeSlotManagementServiceIntegrationTest extends BaseIntegrationTest {
 		log.info("[Given] - lastUpdated를 25분 전으로 변경: {}", twentyFiveMinutesAgo);
 		log.info("[Given] - 설정된 만료 시간: 30분");
 		log.info("[Given] - 이 슬롯은 만료 대상 아님 (25분 < 30분)");
-
+		
 		eventCollector.clear();
-
+		
 		// When: 만료 슬롯 복구 실행
 		log.info("[When] managementService.restoreExpiredPendingSlots() 호출");
 		int restoredCount = managementService.restoreExpiredPendingSlots();
 		log.info("[When] - 반환값: {}개 슬롯 복구됨", restoredCount);
-
+		
 		// Then: 슬롯이 복구되지 않아야 함
 		log.info("[Then] 결과 검증 시작");
-
+		
 		log.info("[Then] [검증1] 복구된 슬롯 개수 확인");
 		log.info("[Then] - 예상: 0개 (25분 < 30분, 만료 안됨)");
 		log.info("[Then] - 실제: {}개", restoredCount);
 		assertThat(restoredCount).isEqualTo(0);
 		log.info("[Then] - ✓ 만료되지 않은 슬롯은 복구되지 않음");
-
+		
 		log.info("[Then] [검증2] 슬롯 상태 유지 확인");
 		RoomTimeSlot maintainedSlot = slotRepository.findByRoomIdAndSlotDateAndSlotTime(
 				roomId, testDate, slotTime
@@ -565,199 +563,199 @@ class TimeSlotManagementServiceIntegrationTest extends BaseIntegrationTest {
 		log.info("[Then] - 실제: {}", maintainedSlot.getStatus());
 		assertThat(maintainedSlot.getStatus()).isEqualTo(SlotStatus.PENDING);
 		log.info("[Then] - ✓ 슬롯이 PENDING 상태로 유지됨");
-
+		
 		log.info("[Then] [검증3] reservationId 유지 확인");
 		log.info("[Then] - 예상: {} (유지)", reservationId);
 		log.info("[Then] - 실제: {}", maintainedSlot.getReservationId());
 		assertThat(maintainedSlot.getReservationId()).isEqualTo(reservationId);
 		log.info("[Then] - ✓ reservationId가 유지됨");
-
+		
 		log.info("=== [#57] [만료 시간 이내 슬롯 유지 검증] 테스트 성공 ===");
 	}
-
+	
 	// ========== restoreSlotsAfterRefund() 통합 테스트 (#69) ==========
-
+	
 	@Test
 	@DisplayName("[#69] 환불 완료 시 다중 슬롯이 원자적으로 복구되어야 함")
 	void restoreSlotsAfterRefund_atomic() {
 		log.info("=== [#69] [환불 슬롯 원자적 복구] 테스트 시작 ===");
-
+		
 		// Given: 3개의 RESERVED 슬롯 생성
 		log.info("[Given] 3개의 RESERVED 상태 슬롯 생성");
 		LocalTime time1 = LocalTime.of(14, 0);
 		LocalTime time2 = LocalTime.of(15, 0);
 		LocalTime time3 = LocalTime.of(16, 0);
-
+		
 		RoomTimeSlot slot1 = RoomTimeSlot.available(roomId, testDate, time1);
 		slot1.markAsPending(reservationId);
 		slot1.confirm();
-
+		
 		RoomTimeSlot slot2 = RoomTimeSlot.available(roomId, testDate, time2);
 		slot2.markAsPending(reservationId);
 		slot2.confirm();
-
+		
 		RoomTimeSlot slot3 = RoomTimeSlot.available(roomId, testDate, time3);
 		slot3.markAsPending(reservationId);
 		slot3.confirm();
-
+		
 		slotRepository.saveAll(List.of(slot1, slot2, slot3));
 		log.info("[Given] - 슬롯 3개 DB 저장 완료 (모두 RESERVED)");
-
+		
 		List<LocalTime> slotTimes = List.of(time1, time2, time3);
-
+		
 		// When: restoreSlotsAfterRefund() 호출
 		log.info("[When] managementService.restoreSlotsAfterRefund() 호출");
 		managementService.restoreSlotsAfterRefund(roomId, testDate, slotTimes);
 		log.info("[When] - 복구 완료");
-
+		
 		// Then: 모든 슬롯이 AVAILABLE, DB에 저장되었는지 확인
 		log.info("[Then] 결과 검증 시작");
-
+		
 		log.info("[Then] [검증1] 모든 슬롯이 AVAILABLE 상태로 복구되었는지 확인");
 		RoomTimeSlot restoredSlot1 = slotRepository.findByRoomIdAndSlotDateAndSlotTime(roomId, testDate, time1).orElseThrow();
 		RoomTimeSlot restoredSlot2 = slotRepository.findByRoomIdAndSlotDateAndSlotTime(roomId, testDate, time2).orElseThrow();
 		RoomTimeSlot restoredSlot3 = slotRepository.findByRoomIdAndSlotDateAndSlotTime(roomId, testDate, time3).orElseThrow();
-
+		
 		assertThat(restoredSlot1.getStatus()).isEqualTo(SlotStatus.AVAILABLE);
 		assertThat(restoredSlot2.getStatus()).isEqualTo(SlotStatus.AVAILABLE);
 		assertThat(restoredSlot3.getStatus()).isEqualTo(SlotStatus.AVAILABLE);
 		log.info("[Then] - ✓ 모든 슬롯이 AVAILABLE 상태로 복구됨");
-
+		
 		log.info("[Then] [검증2] reservationId가 제거되었는지 확인");
 		assertThat(restoredSlot1.getReservationId()).isNull();
 		assertThat(restoredSlot2.getReservationId()).isNull();
 		assertThat(restoredSlot3.getReservationId()).isNull();
 		log.info("[Then] - ✓ 모든 슬롯의 reservationId가 제거됨");
-
+		
 		log.info("=== [#69] [환불 슬롯 원자적 복구] 테스트 성공 ===");
 	}
-
+	
 	@Test
 	@DisplayName("[#69] Pessimistic Lock이 적용되어야 함")
 	void restoreSlotsAfterRefund_pessimisticLock() {
 		log.info("=== [#69] [환불 슬롯 복구 - Pessimistic Lock] 테스트 시작 ===");
-
+		
 		// Given: RESERVED 슬롯 생성
 		log.info("[Given] RESERVED 상태 슬롯 생성");
 		LocalTime time1 = LocalTime.of(17, 0);
-
+		
 		RoomTimeSlot slot = RoomTimeSlot.available(roomId, testDate, time1);
 		slot.markAsPending(reservationId);
 		slot.confirm();
 		slotRepository.save(slot);
 		log.info("[Given] - 슬롯 DB 저장 완료 (RESERVED)");
-
+		
 		// When: restoreSlotsAfterRefund() 호출
 		log.info("[When] managementService.restoreSlotsAfterRefund() 호출");
 		managementService.restoreSlotsAfterRefund(roomId, testDate, List.of(time1));
-
+		
 		// Then: 슬롯이 AVAILABLE로 복구되었는지 확인
 		log.info("[Then] Pessimistic Lock을 사용한 복구 검증");
 		RoomTimeSlot restoredSlot = slotRepository.findByRoomIdAndSlotDateAndSlotTime(roomId, testDate, time1).orElseThrow();
-
+		
 		assertThat(restoredSlot.getStatus()).isEqualTo(SlotStatus.AVAILABLE);
 		log.info("[Then] - ✓ Pessimistic Lock을 사용하여 슬롯이 안전하게 복구됨");
-
+		
 		log.info("=== [#69] [환불 슬롯 복구 - Pessimistic Lock] 테스트 성공 ===");
 	}
-
+	
 	@Test
 	@DisplayName("[#69] 일부 슬롯이 없으면 전체 복구가 실패해야 함")
 	void restoreSlotsAfterRefund_partialFailure() {
 		log.info("=== [#69] [환불 슬롯 복구 - 부분 실패] 테스트 시작 ===");
-
+		
 		// Given: 2개 슬롯만 존재 (3개 요청)
 		log.info("[Given] 2개 슬롯만 DB에 저장 (1개는 존재하지 않음)");
 		LocalTime time1 = LocalTime.of(18, 0);
 		LocalTime time2 = LocalTime.of(19, 0);
 		LocalTime time3 = LocalTime.of(20, 0); // 존재하지 않음
-
+		
 		RoomTimeSlot slot1 = RoomTimeSlot.available(roomId, testDate, time1);
 		slot1.markAsPending(reservationId);
 		slot1.confirm();
-
+		
 		RoomTimeSlot slot2 = RoomTimeSlot.available(roomId, testDate, time2);
 		slot2.markAsPending(reservationId);
 		slot2.confirm();
-
+		
 		slotRepository.saveAll(List.of(slot1, slot2));
 		log.info("[Given] - 슬롯 2개만 저장 (time1, time2)");
-
+		
 		List<LocalTime> requestedTimes = List.of(time1, time2, time3);
-
+		
 		// When & Then: 예외 발생 확인
 		log.info("[When & Then] restoreSlotsAfterRefund() 호출 시 SlotNotFoundException 발생 확인");
 		assertThatThrownBy(() -> managementService.restoreSlotsAfterRefund(roomId, testDate, requestedTimes))
 				.isInstanceOf(SlotNotFoundException.class);
 		log.info("[Then] - ✓ SlotNotFoundException 발생 확인됨");
-
+		
 		// Then: 기존 슬롯들이 RESERVED 상태 유지 (롤백)
 		log.info("[Then] 기존 슬롯들이 RESERVED 상태를 유지하는지 확인 (원자성)");
 		RoomTimeSlot unchangedSlot1 = slotRepository.findByRoomIdAndSlotDateAndSlotTime(roomId, testDate, time1).orElseThrow();
 		RoomTimeSlot unchangedSlot2 = slotRepository.findByRoomIdAndSlotDateAndSlotTime(roomId, testDate, time2).orElseThrow();
-
+		
 		assertThat(unchangedSlot1.getStatus()).isEqualTo(SlotStatus.RESERVED);
 		assertThat(unchangedSlot2.getStatus()).isEqualTo(SlotStatus.RESERVED);
 		log.info("[Then] - ✓ 원자성 보장: 일부 실패 시 전체 롤백됨");
-
+		
 		log.info("=== [#69] [환불 슬롯 복구 - 부분 실패] 테스트 성공 ===");
 	}
-
+	
 	@Test
 	@DisplayName("[#69] PENDING 상태 슬롯도 복구되어야 함")
 	void restoreSlotsAfterRefund_pendingSlots() {
 		log.info("=== [#69] [환불 슬롯 복구 - PENDING 슬롯] 테스트 시작 ===");
-
+		
 		// Given: PENDING 상태 슬롯 생성
 		log.info("[Given] PENDING 상태 슬롯 생성");
 		LocalTime time1 = LocalTime.of(21, 0);
-
+		
 		RoomTimeSlot slot = RoomTimeSlot.available(roomId, testDate, time1);
 		slot.markAsPending(reservationId);
 		slotRepository.save(slot);
 		log.info("[Given] - 슬롯 상태: PENDING");
-
+		
 		// When: restoreSlotsAfterRefund() 호출
 		log.info("[When] managementService.restoreSlotsAfterRefund() 호출");
 		managementService.restoreSlotsAfterRefund(roomId, testDate, List.of(time1));
-
+		
 		// Then: PENDING → AVAILABLE 상태 전이 확인
 		log.info("[Then] PENDING → AVAILABLE 상태 전이 확인");
 		RoomTimeSlot restoredSlot = slotRepository.findByRoomIdAndSlotDateAndSlotTime(roomId, testDate, time1).orElseThrow();
-
+		
 		assertThat(restoredSlot.getStatus()).isEqualTo(SlotStatus.AVAILABLE);
 		log.info("[Then] - ✓ PENDING 슬롯도 AVAILABLE로 복구됨");
-
+		
 		log.info("=== [#69] [환불 슬롯 복구 - PENDING 슬롯] 테스트 성공 ===");
 	}
-
+	
 	@Test
 	@DisplayName("[#69] 이미 AVAILABLE 상태인 슬롯은 경고 로그만 출력")
 	void restoreSlotsAfterRefund_alreadyAvailable() {
 		log.info("=== [#69] [환불 슬롯 복구 - 이미 AVAILABLE] 테스트 시작 ===");
-
+		
 		// Given: AVAILABLE 상태 슬롯
 		log.info("[Given] AVAILABLE 상태 슬롯 생성");
 		LocalTime time1 = LocalTime.of(22, 0);
-
+		
 		RoomTimeSlot slot = RoomTimeSlot.available(roomId, testDate, time1);
 		slotRepository.save(slot);
 		log.info("[Given] - 슬롯 상태: AVAILABLE");
-
+		
 		// When: restoreSlotsAfterRefund() 호출
 		log.info("[When] managementService.restoreSlotsAfterRefund() 호출");
 		managementService.restoreSlotsAfterRefund(roomId, testDate, List.of(time1));
-
+		
 		// Then: AVAILABLE 상태 유지 (멱등성)
 		log.info("[Then] AVAILABLE 상태 유지 확인 (멱등성)");
 		RoomTimeSlot unchangedSlot = slotRepository.findByRoomIdAndSlotDateAndSlotTime(roomId, testDate, time1).orElseThrow();
-
+		
 		assertThat(unchangedSlot.getStatus()).isEqualTo(SlotStatus.AVAILABLE);
 		log.info("[Then] - ✓ 이미 AVAILABLE 상태인 슬롯은 그대로 유지됨 (멱등성)");
-
+		
 		log.info("=== [#69] [환불 슬롯 복구 - 이미 AVAILABLE] 테스트 성공 ===");
 	}
-
+	
 	/**
 	 * 테스트용 이벤트 수집기.
 	 * 발행된 이벤트를 리스트에 수집하여 검증할 수 있게 한다.
