@@ -21,25 +21,25 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 public class SlotRestoredEventHandler implements EventHandler<SlotRestoredEvent> {
-
+	
 	private final TimeSlotManagementService timeSlotManagementService;
-
+	
 	@Override
 	@Transactional
 	public void handle(SlotRestoredEvent event) {
 		log.info("Processing SlotRestoredEvent: reservationId={}, reason={}",
 				event.getReservationId(), event.getRestoreReason());
-
+		
 		try {
 			// String → Long 변환
 			Long reservationId = Long.parseLong(event.getReservationId());
-
+			
 			// Domain Service를 통한 슬롯 복구 (트랜잭션 원자성 보장)
 			timeSlotManagementService.cancelSlotsByReservationId(reservationId);
-
+			
 			log.info("SlotRestoredEvent processed successfully: reservationId={}, reason={}",
 					reservationId, event.getRestoreReason());
-
+			
 		} catch (NumberFormatException e) {
 			log.error("Invalid reservationId format: reservationId={}", event.getReservationId(), e);
 			throw new IllegalArgumentException("Invalid reservationId format: " + event.getReservationId(), e);
