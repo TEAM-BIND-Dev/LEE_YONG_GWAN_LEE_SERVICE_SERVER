@@ -25,41 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class OutboxService {
-
+	
 	private final OutboxMessageRepository outboxRepository;
 	private final JsonUtil jsonUtil;
-
-	/**
-	 * 도메인 이벤트를 Outbox에 저장합니다.
-	 * <p>
-	 * 호출한 트랜잭션과 같은 트랜잭션 내에서 실행되어 원자성을 보장합니다.
-	 *
-	 * @param event          도메인 이벤트
-	 * @param messageDto     Kafka 메시지 DTO
-	 * @param aggregateType  Aggregate 타입
-	 * @param aggregateId    Aggregate ID
-	 */
-	@Transactional
-	public void saveToOutbox(Event event, Object messageDto, String aggregateType, String aggregateId) {
-		// 1. Message DTO를 JSON으로 직렬화
-		String payload = jsonUtil.toJson(messageDto);
-
-		// 2. OutboxMessage 생성
-		OutboxMessage outbox = OutboxMessage.create(
-				aggregateType,
-				aggregateId,
-				event.getTopic(),
-				event.getEventTypeName(),
-				payload
-		);
-
-		// 3. DB에 저장 (현재 트랜잭션 내에서)
-		outboxRepository.save(outbox);
-
-		log.debug("Event saved to outbox: aggregateType={}, aggregateId={}, eventType={}",
-				aggregateType, aggregateId, event.getEventTypeName());
-	}
-
+	
 	/**
 	 * Aggregate ID를 추출하는 헬퍼 메서드.
 	 * <p>
@@ -74,5 +43,36 @@ public class OutboxService {
 		// 현재는 단순화를 위해 eventType을 반환
 		// 실제 구현 시 각 이벤트별로 적절한 ID를 추출하도록 수정 필요
 		return event.getEventTypeName();
+	}
+	
+	/**
+	 * 도메인 이벤트를 Outbox에 저장합니다.
+	 * <p>
+	 * 호출한 트랜잭션과 같은 트랜잭션 내에서 실행되어 원자성을 보장합니다.
+	 *
+	 * @param event         도메인 이벤트
+	 * @param messageDto    Kafka 메시지 DTO
+	 * @param aggregateType Aggregate 타입
+	 * @param aggregateId   Aggregate ID
+	 */
+	@Transactional
+	public void saveToOutbox(Event event, Object messageDto, String aggregateType, String aggregateId) {
+		// 1. Message DTO를 JSON으로 직렬화
+		String payload = jsonUtil.toJson(messageDto);
+		
+		// 2. OutboxMessage 생성
+		OutboxMessage outbox = OutboxMessage.create(
+				aggregateType,
+				aggregateId,
+				event.getTopic(),
+				event.getEventTypeName(),
+				payload
+		);
+		
+		// 3. DB에 저장 (현재 트랜잭션 내에서)
+		outboxRepository.save(outbox);
+		
+		log.debug("Event saved to outbox: aggregateType={}, aggregateId={}, eventType={}",
+				aggregateType, aggregateId, event.getEventTypeName());
 	}
 }
