@@ -14,10 +14,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PaymentCompletedEvent extends Event {
-
+	
 	private static final String TOPIC = "payment-completed";
 	private static final String EVENT_TYPE = "PaymentCompleted";
-
+	
 	private String paymentId;
 	private String reservationId;
 	private String orderId;
@@ -25,7 +25,7 @@ public class PaymentCompletedEvent extends Event {
 	private Long amount;
 	private String method;
 	private String paidAt;
-
+	
 	private PaymentCompletedEvent(
 			String paymentId,
 			String reservationId,
@@ -44,7 +44,7 @@ public class PaymentCompletedEvent extends Event {
 		this.method = method;
 		this.paidAt = paidAt;
 	}
-
+	
 	public static PaymentCompletedEvent of(
 			String paymentId,
 			String reservationId,
@@ -64,7 +64,7 @@ public class PaymentCompletedEvent extends Event {
 				paidAt
 		);
 	}
-
+	
 	@Override
 	public String getEventTypeName() {
 		return EVENT_TYPE;
