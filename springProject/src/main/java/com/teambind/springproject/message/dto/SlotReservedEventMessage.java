@@ -20,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class SlotReservedEventMessage {
-
+	
 	private String topic;
 	private String eventType;
 	private String roomId;
@@ -28,7 +28,7 @@ public class SlotReservedEventMessage {
 	private List<LocalTime> startTimes;
 	private String reservationId;
 	private LocalDateTime occurredAt;
-
+	
 	/**
 	 * SlotReservedEvent로부터 메시지 DTO를 생성한다.
 	 */
@@ -43,7 +43,7 @@ public class SlotReservedEventMessage {
 				event.getOccurredAt()
 		);
 	}
-
+	
 	/**
 	 * 메시지 DTO를 SlotReservedEvent로 변환한다.
 	 */
