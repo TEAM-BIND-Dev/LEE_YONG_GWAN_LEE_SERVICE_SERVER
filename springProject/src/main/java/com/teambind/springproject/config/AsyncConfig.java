@@ -12,6 +12,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 /**
  * 비동기 작업 설정.
  * <p>
+ *
  * @Async 어노테이션을 사용하는 비동기 메서드들을 위한 스레드풀을 설정합니다.
  * <p>
  * 설정된 Executor:
@@ -21,7 +22,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Configuration
 @EnableAsync
 public class AsyncConfig {
-
+	
 	/**
 	 * Outbox 즉시 발행을 위한 전용 스레드풀.
 	 * <p>
@@ -41,36 +42,36 @@ public class AsyncConfig {
 	@Bean(name = "outboxExecutor")
 	public Executor outboxExecutor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-
+		
 		// 기본 스레드 수
 		executor.setCorePoolSize(5);
-
+		
 		// 최대 스레드 수
 		executor.setMaxPoolSize(20);
-
+		
 		// 큐 용량
 		executor.setQueueCapacity(100);
-
+		
 		// 유휴 스레드 유지 시간 (초)
 		executor.setKeepAliveSeconds(60);
-
+		
 		// 스레드 이름 접두사 (로그 추적용)
 		executor.setThreadNamePrefix("outbox-async-");
-
+		
 		// 큐 초과 시 정책: 호출 스레드에서 실행
 		executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-
+		
 		// 초기화 대기
 		executor.setWaitForTasksToCompleteOnShutdown(true);
-
+		
 		// 종료 대기 시간 (초)
 		executor.setAwaitTerminationSeconds(60);
-
+		
 		executor.initialize();
-
+		
 		log.info("Outbox async executor initialized: coreSize={}, maxSize={}, queueCapacity={}",
 				executor.getCorePoolSize(), executor.getMaxPoolSize(), executor.getQueueCapacity());
-
+		
 		return executor;
 	}
 }
