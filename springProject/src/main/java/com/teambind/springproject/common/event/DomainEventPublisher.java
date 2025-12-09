@@ -23,9 +23,9 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class DomainEventPublisher {
-
+	
 	private static ApplicationEventPublisher eventPublisher;
-
+	
 	/**
 	 * Spring이 생성자 주입을 통해 ApplicationEventPublisher를 설정합니다.
 	 *
@@ -35,7 +35,7 @@ public class DomainEventPublisher {
 		DomainEventPublisher.eventPublisher = publisher;
 		log.debug("DomainEventPublisher initialized");
 	}
-
+	
 	/**
 	 * 도메인 이벤트를 발행합니다.
 	 * <p>
@@ -49,7 +49,7 @@ public class DomainEventPublisher {
 					event.getClass().getSimpleName());
 			return;
 		}
-
+		
 		eventPublisher.publishEvent(event);
 		log.debug("Domain event published: {}", event.getClass().getSimpleName());
 	}
