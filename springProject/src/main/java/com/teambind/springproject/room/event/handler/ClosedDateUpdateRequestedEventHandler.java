@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 public class ClosedDateUpdateRequestedEventHandler implements EventHandler<ClosedDateUpdateRequestedEvent> {
-
+	
 	private final TimeSlotManagementService timeSlotManagementService;
 	
 	@Override
@@ -29,13 +29,13 @@ public class ClosedDateUpdateRequestedEventHandler implements EventHandler<Close
 	public void handle(ClosedDateUpdateRequestedEvent event) {
 		log.info("Processing ClosedDateUpdateRequestedEvent: requestId={}, roomId={}",
 				event.getRequestId(), event.getRoomId());
-
+		
 		// Domain Service를 통한 휴무일 업데이트 (트랜잭션 원자성 보장)
 		int affectedSlots = timeSlotManagementService.updateClosedDatesForRoom(
 				event.getRoomId(),
 				event.getRequestId()
 		);
-
+		
 		log.info("ClosedDateUpdateRequestedEvent processed: requestId={}, affectedSlots={}",
 				event.getRequestId(), affectedSlots);
 	}
