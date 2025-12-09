@@ -28,16 +28,16 @@ import java.util.concurrent.TimeUnit;
 @Component
 @RequiredArgsConstructor
 public class OutboxScheduler {
-
+	
 	private final OutboxMessageRepository outboxRepository;
 	private final KafkaTemplate<String, String> kafkaTemplate;
-
+	
 	@Value("${outbox.scheduler.max-retries:5}")
 	private int maxRetries;
-
+	
 	@Value("${outbox.scheduler.batch-size:100}")
 	private int batchSize;
-
+	
 	/**
 	 * PENDING 상태의 메시지를 주기적으로 발행합니다.
 	 * <p>
@@ -57,16 +57,16 @@ public class OutboxScheduler {
 		try {
 			// 1. 재시도 가능한 PENDING 메시지 조회 (배치 처리)
 			List<OutboxMessage> pendingMessages = outboxRepository.findRetryableMessages(maxRetries);
-
+			
 			if (pendingMessages.isEmpty()) {
 				return;
 			}
-
+			
 			log.info("Publishing {} pending outbox messages", pendingMessages.size());
-
+			
 			int successCount = 0;
 			int failedCount = 0;
-
+			
 			// 2. 각 메시지 발행 시도
 			for (OutboxMessage message : pendingMessages) {
 				try {
@@ -76,46 +76,46 @@ public class OutboxScheduler {
 							message.getAggregateId(), // 파티셔닝 키
 							message.getPayload()
 					).get(2, TimeUnit.SECONDS);
-
+					
 					// 성공 시 PUBLISHED로 마킹
 					message.markAsPublished();
 					outboxRepository.save(message);
-
+					
 					successCount++;
-
+					
 					log.debug("Outbox message published: id={}, eventType={}",
 							message.getId(), message.getEventType());
-
+					
 				} catch (Exception e) {
 					// 실패 시 재시도 횟수 증가
 					message.incrementRetryCount();
-
+					
 					// 최대 재시도 초과 시 FAILED로 마킹
 					if (message.exceedsMaxRetries(maxRetries)) {
 						message.markAsFailed(
 								String.format("Max retries exceeded: %s", e.getMessage())
 						);
 						failedCount++;
-
+						
 						log.error("Outbox message permanently failed: id={}, eventType={}, retries={}",
 								message.getId(), message.getEventType(), message.getRetryCount(), e);
 					} else {
 						log.warn("Outbox message publish failed, will retry: id={}, eventType={}, retries={}",
 								message.getId(), message.getEventType(), message.getRetryCount());
 					}
-
+					
 					outboxRepository.save(message);
 				}
 			}
-
+			
 			log.info("Outbox scheduler completed: success={}, failed={}, total={}",
 					successCount, failedCount, pendingMessages.size());
-
+			
 		} catch (Exception e) {
 			log.error("Outbox scheduler encountered an error", e);
 		}
 	}
-
+	
 	/**
 	 * 오래된 PUBLISHED 메시지를 정리합니다.
 	 * <p>
@@ -129,12 +129,12 @@ public class OutboxScheduler {
 		try {
 			java.time.LocalDateTime sevenDaysAgo = java.time.LocalDateTime.now().minusDays(7);
 			List<OutboxMessage> oldMessages = outboxRepository.findPublishedBefore(sevenDaysAgo);
-
+			
 			if (!oldMessages.isEmpty()) {
 				outboxRepository.deleteAll(oldMessages);
 				log.info("Cleaned up {} old outbox messages", oldMessages.size());
 			}
-
+			
 		} catch (Exception e) {
 			log.error("Outbox cleanup encountered an error", e);
 		}
