@@ -17,13 +17,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class ClosedDateUpdateRequestedEventMessage {
-
+	
 	private String topic;
 	private String eventType;
 	private String requestId;
 	private String roomId;
 	private LocalDateTime requestedAt;
-
+	
 	/**
 	 * ClosedDateUpdateRequestedEvent로부터 메시지 DTO를 생성한다.
 	 * Long ID → String ID 변환
@@ -37,7 +37,7 @@ public class ClosedDateUpdateRequestedEventMessage {
 				event.getRequestedAt()
 		);
 	}
-
+	
 	/**
 	 * 메시지 DTO를 ClosedDateUpdateRequestedEvent로 변환한다.
 	 * String ID → Long ID 변환
