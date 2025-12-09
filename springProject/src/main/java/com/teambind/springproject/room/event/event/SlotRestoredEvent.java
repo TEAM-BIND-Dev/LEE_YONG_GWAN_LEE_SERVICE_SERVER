@@ -23,7 +23,7 @@ public class SlotRestoredEvent extends Event {
 	private String reservationId;
 	private String restoreReason;
 	private LocalDateTime occurredAt;
-
+	
 	private SlotRestoredEvent(
 			String reservationId,
 			String restoreReason,
