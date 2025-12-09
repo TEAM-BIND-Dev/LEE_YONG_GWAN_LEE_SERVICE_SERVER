@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * 슬롯 예약 대기 이벤트.
- *
+ * <p>
  * 여러 슬롯이 AVAILABLE → PENDING 상태로 전환될 때 발행된다.
  * 하나의 예약(reservationId)에 대해 여러 시간대의 슬롯을 예약할 수 있다.
  */
@@ -28,7 +28,7 @@ public class SlotReservedEvent extends Event {
 	private List<LocalTime> startTimes;
 	private String reservationId;
 	private LocalDateTime occurredAt;
-
+	
 	private SlotReservedEvent(
 			String roomId,
 			LocalDate slotDate,
@@ -43,7 +43,7 @@ public class SlotReservedEvent extends Event {
 		this.reservationId = reservationId;
 		this.occurredAt = occurredAt;
 	}
-
+	
 	public static SlotReservedEvent of(
 			String roomId,
 			LocalDate slotDate,
