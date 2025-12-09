@@ -34,15 +34,15 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class EventPublisher {
 	private final OutboxService outboxService;
-
+	
 	@Transactional
 	public void publish(Event event) {
 		// Event를 Message DTO로 변환 (ID: Long → String)
 		Object messageDto = convertToMessage(event);
-
+		
 		// Aggregate 정보 추출
 		AggregateInfo aggregateInfo = getAggregateInfo(event);
-
+		
 		// Outbox에 저장 (현재 트랜잭션 내에서)
 		outboxService.saveToOutbox(
 				event,
@@ -51,7 +51,7 @@ public class EventPublisher {
 				aggregateInfo.id()
 		);
 	}
-
+	
 	/**
 	 * Event를 Message DTO로 변환한다.
 	 * <p>
@@ -69,33 +69,33 @@ public class EventPublisher {
 		if (event instanceof SlotReservedEvent e) {
 			return SlotReservedEventMessage.from(e);
 		}
-
+		
 		// SlotCancelledEvent
 		if (event instanceof SlotCancelledEvent e) {
 			return SlotCancelledEventMessage.from(e);
 		}
-
+		
 		// SlotRestoredEvent
 		if (event instanceof SlotRestoredEvent e) {
 			return SlotRestoredEventMessage.from(e);
 		}
-
+		
 		// SlotGenerationRequestedEvent
 		if (event instanceof SlotGenerationRequestedEvent e) {
 			return SlotGenerationRequestedEventMessage.from(e);
 		}
-
+		
 		// ClosedDateUpdateRequestedEvent
 		if (event instanceof ClosedDateUpdateRequestedEvent e) {
 			return ClosedDateUpdateRequestedEventMessage.from(e);
 		}
-
+		
 		// Unknown event type
 		throw new IllegalArgumentException(
 				"지원하지 않는 이벤트 타입입니다: " + event.getClass().getName()
 		);
 	}
-
+	
 	/**
 	 * Aggregate 정보를 추출합니다.
 	 * <p>
@@ -109,33 +109,33 @@ public class EventPublisher {
 		if (event instanceof SlotReservedEvent e) {
 			return new AggregateInfo("RoomTimeSlot", String.valueOf(e.getRoomId()));
 		}
-
+		
 		// SlotCancelledEvent
 		if (event instanceof SlotCancelledEvent e) {
 			return new AggregateInfo("Reservation", String.valueOf(e.getReservationId()));
 		}
-
+		
 		// SlotRestoredEvent
 		if (event instanceof SlotRestoredEvent e) {
 			return new AggregateInfo("Reservation", e.getReservationId());
 		}
-
+		
 		// SlotGenerationRequestedEvent
 		if (event instanceof SlotGenerationRequestedEvent e) {
 			return new AggregateInfo("Room", e.getRequestId());
 		}
-
+		
 		// ClosedDateUpdateRequestedEvent
 		if (event instanceof ClosedDateUpdateRequestedEvent e) {
 			return new AggregateInfo("Room", e.getRequestId());
 		}
-
+		
 		// Unknown event type
 		throw new IllegalArgumentException(
 				"지원하지 않는 이벤트 타입입니다: " + event.getClass().getName()
 		);
 	}
-
+	
 	/**
 	 * Aggregate 정보를 담는 Record.
 	 *
