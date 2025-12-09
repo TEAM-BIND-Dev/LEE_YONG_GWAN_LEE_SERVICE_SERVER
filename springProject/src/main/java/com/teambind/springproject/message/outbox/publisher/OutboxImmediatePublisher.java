@@ -40,10 +40,10 @@ import java.util.concurrent.TimeUnit;
 @Component
 @RequiredArgsConstructor
 public class OutboxImmediatePublisher {
-
+	
 	private final KafkaTemplate<String, String> kafkaTemplate;
 	private final OutboxMessageRepository outboxRepository;
-
+	
 	/**
 	 * OutboxSavedEvent를 수신하여 즉시 Kafka 발행을 시도합니다.
 	 * <p>
@@ -51,16 +51,15 @@ public class OutboxImmediatePublisher {
 	 * - DB 트랜잭션 커밋 후 실행
 	 * - Outbox 메시지가 확실히 DB에 저장된 상태
 	 * <p>
-	 * @Async("outboxExecutor"):
-	 * - 비동기 실행으로 메인 트랜잭션 스레드를 블록하지 않음
+	 *
+	 * @param event OutboxSavedEvent
+	 * @Async("outboxExecutor"): - 비동기 실행으로 메인 트랜잭션 스레드를 블록하지 않음
 	 * - 전용 스레드풀(outboxExecutor) 사용
 	 * - 여러 메시지 동시 발행 가능
 	 * <p>
 	 * 타임아웃: 1초
 	 * - ImmediatePublisher는 빠른 시도만 담당
 	 * - 타임아웃 시 Scheduler가 2초 타임아웃으로 재시도
-	 *
-	 * @param event OutboxSavedEvent
 	 */
 	@Async("outboxExecutor")
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -72,20 +71,20 @@ public class OutboxImmediatePublisher {
 					event.getKey(),          // 파티셔닝 키
 					event.getPayload()
 			).get(1, TimeUnit.SECONDS);
-
+			
 			// 성공 시 PUBLISHED 마킹 (새 트랜잭션)
 			markAsPublished(event.getOutboxId());
-
+			
 			log.debug("Outbox message immediately published: id={}, topic={}",
 					event.getOutboxId(), event.getTopic());
-
+			
 		} catch (Exception e) {
 			// 실패 시 경고 로그만 남김 (Scheduler가 재시도할 것임)
 			log.warn("Immediate publish failed for outbox id={}, will be retried by scheduler: {}",
 					event.getOutboxId(), e.getMessage());
 		}
 	}
-
+	
 	/**
 	 * Outbox 메시지를 PUBLISHED 상태로 마킹합니다.
 	 * <p>
@@ -100,7 +99,7 @@ public class OutboxImmediatePublisher {
 		OutboxMessage message = outboxRepository.findById(outboxId)
 				.orElseThrow(() -> new IllegalStateException(
 						"Outbox message not found: " + outboxId));
-
+		
 		message.markAsPublished();
 		outboxRepository.save(message);
 	}
