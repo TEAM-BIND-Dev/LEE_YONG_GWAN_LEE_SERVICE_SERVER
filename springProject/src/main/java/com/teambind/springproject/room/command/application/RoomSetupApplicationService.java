@@ -46,10 +46,10 @@ public class RoomSetupApplicationService {
 	private final OperatingPolicyPort operatingPolicyPort;
 	private final SlotGenerationRequestPort slotGenerationRequestPort;
 	private final EventPublisher eventPublisher;
-
+	
 	@Value("${room.timeSlot.rollingWindow.days:30}")
 	private int rollingWindowDays;
-
+	
 	public RoomSetupApplicationService(
 			OperatingPolicyPort operatingPolicyPort,
 			SlotGenerationRequestPort slotGenerationRequestPort,
@@ -103,11 +103,11 @@ public class RoomSetupApplicationService {
 		
 		log.info("Room operating policy saved: roomId={}, policyId={}",
 				request.getRoomId(), policy.getPolicyId());
-
+		
 		// 3. 슬롯 생성 날짜 범위 계산 (오늘부터 N일, 설정값 사용)
 		LocalDate startDate = LocalDate.now();
 		LocalDate endDate = startDate.plusDays(rollingWindowDays);
-
+		
 		log.debug("Slot generation date range calculated: startDate={}, endDate={}, rollingWindowDays={}",
 				startDate, endDate, rollingWindowDays);
 		
