@@ -19,22 +19,22 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class OutboxSavedEvent {
-
+	
 	/**
 	 * Outbox 메시지 ID (발행 성공 시 PUBLISHED 마킹용)
 	 */
 	private final Long outboxId;
-
+	
 	/**
 	 * Kafka Topic
 	 */
 	private final String topic;
-
+	
 	/**
 	 * Kafka 파티셔닝 키 (Aggregate ID)
 	 */
 	private final String key;
-
+	
 	/**
 	 * 메시지 Payload (JSON)
 	 */
