@@ -4,6 +4,7 @@ import com.teambind.springproject.common.event.DomainEventPublisher;
 import com.teambind.springproject.message.outbox.enums.OutboxStatus;
 import com.teambind.springproject.message.outbox.event.OutboxSavedEvent;
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -27,76 +28,76 @@ import java.util.Objects;
 		}
 )
 public class OutboxMessage {
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
+	
 	/**
 	 * Aggregate 타입 (예: RoomTimeSlot, Reservation).
 	 */
 	@Column(name = "aggregate_type", nullable = false, length = 100)
 	private String aggregateType;
-
+	
 	/**
 	 * Aggregate ID (Kafka 파티셔닝 키로 사용).
 	 */
 	@Column(name = "aggregate_id", nullable = false, length = 100)
 	private String aggregateId;
-
+	
 	/**
 	 * Kafka 토픽명.
 	 */
 	@Column(name = "topic", nullable = false, length = 100)
 	private String topic;
-
+	
 	/**
 	 * 이벤트 타입 (예: SlotReserved, SlotCancelled).
 	 */
 	@Column(name = "event_type", nullable = false, length = 100)
 	private String eventType;
-
+	
 	/**
 	 * JSON 형식의 메시지 페이로드.
 	 */
 	@Column(name = "payload", nullable = false, columnDefinition = "TEXT")
 	private String payload;
-
+	
 	/**
 	 * 발행 상태.
 	 */
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = false, length = 20)
 	private OutboxStatus status;
-
+	
 	/**
 	 * 생성 시각 (Outbox에 저장된 시각).
 	 */
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDateTime createdAt;
-
+	
 	/**
 	 * 발행 완료 시각.
 	 */
 	@Column(name = "published_at")
 	private LocalDateTime publishedAt;
-
+	
 	/**
 	 * 재시도 횟수.
 	 */
 	@Column(name = "retry_count", nullable = false)
 	private Integer retryCount;
-
+	
 	/**
 	 * 마지막 에러 메시지.
 	 */
 	@Column(name = "error_message", columnDefinition = "TEXT")
 	private String errorMessage;
-
+	
 	protected OutboxMessage() {
 		// JPA를 위한 기본 생성자
 	}
-
+	
 	private OutboxMessage(
 			String aggregateType,
 			String aggregateId,
@@ -113,7 +114,7 @@ public class OutboxMessage {
 		this.createdAt = LocalDateTime.now();
 		this.retryCount = 0;
 	}
-
+	
 	/**
 	 * 새로운 Outbox 메시지를 생성합니다.
 	 *
@@ -133,7 +134,7 @@ public class OutboxMessage {
 	) {
 		return new OutboxMessage(aggregateType, aggregateId, topic, eventType, payload);
 	}
-
+	
 	/**
 	 * Outbox 메시지가 DB에 저장된 직후 OutboxSavedEvent를 발행합니다.
 	 * <p>
@@ -151,7 +152,7 @@ public class OutboxMessage {
 				new OutboxSavedEvent(this.id, this.topic, this.aggregateId, this.payload)
 		);
 	}
-
+	
 	/**
 	 * 발행 완료 상태로 변경합니다.
 	 */
@@ -159,7 +160,7 @@ public class OutboxMessage {
 		this.status = OutboxStatus.PUBLISHED;
 		this.publishedAt = LocalDateTime.now();
 	}
-
+	
 	/**
 	 * 발행 실패 상태로 변경합니다.
 	 *
@@ -169,14 +170,14 @@ public class OutboxMessage {
 		this.status = OutboxStatus.FAILED;
 		this.errorMessage = errorMessage;
 	}
-
+	
 	/**
 	 * 재시도 횟수를 증가시킵니다.
 	 */
 	public void incrementRetryCount() {
 		this.retryCount++;
 	}
-
+	
 	/**
 	 * 최대 재시도 횟수를 초과했는지 확인합니다.
 	 *
@@ -186,59 +187,59 @@ public class OutboxMessage {
 	public boolean exceedsMaxRetries(int maxRetries) {
 		return this.retryCount >= maxRetries;
 	}
-
+	
 	// Getters
 	public Long getId() {
 		return id;
 	}
-
+	
 	public String getAggregateType() {
 		return aggregateType;
 	}
-
+	
 	public String getAggregateId() {
 		return aggregateId;
 	}
-
+	
 	public String getTopic() {
 		return topic;
 	}
-
+	
 	public String getEventType() {
 		return eventType;
 	}
-
+	
 	public String getPayload() {
 		return payload;
 	}
-
+	
 	public OutboxStatus getStatus() {
 		return status;
 	}
-
+	
 	public LocalDateTime getCreatedAt() {
 		return createdAt;
 	}
-
+	
 	public LocalDateTime getPublishedAt() {
 		return publishedAt;
 	}
-
+	
 	public Integer getRetryCount() {
 		return retryCount;
 	}
-
+	
 	public String getErrorMessage() {
 		return errorMessage;
 	}
-
+	
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof OutboxMessage that)) return false;
 		return Objects.equals(id, that.id);
 	}
-
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
