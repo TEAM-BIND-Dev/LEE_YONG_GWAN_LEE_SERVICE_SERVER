@@ -44,7 +44,7 @@ class TimeSlotGenerationServiceImplTest {
 	
 	@Mock
 	private OperatingPolicyPort operatingPolicyPort;
-
+	
 	@InjectMocks
 	private TimeSlotGenerationServiceImpl service;
 	
@@ -58,7 +58,7 @@ class TimeSlotGenerationServiceImplTest {
 		roomId = 100L;
 		testDate = LocalDate.of(2025, 1, 20); // 월요일
 		slotUnit = SlotUnit.HALF_HOUR;
-
+		
 		// 월요일 09:00, 10:00 운영 정책
 		List<WeeklySlotTime> slotTimes = List.of(
 				WeeklySlotTime.of(DayOfWeek.MONDAY, LocalTime.of(9, 0)),
@@ -66,7 +66,7 @@ class TimeSlotGenerationServiceImplTest {
 		);
 		WeeklySlotSchedule schedule = WeeklySlotSchedule.of(slotTimes);
 		policy = RoomOperatingPolicy.create(roomId, schedule, RecurrencePattern.EVERY_WEEK, slotUnit, List.of());
-
+		
 		log.info("=== 테스트 데이터 초기화 ===");
 		log.info("- roomId: {}", roomId);
 		log.info("- testDate: {} ({})", testDate, testDate.getDayOfWeek());
@@ -83,7 +83,7 @@ class TimeSlotGenerationServiceImplTest {
 		log.info("[Given] Mock 동작 설정");
 		when(operatingPolicyPort.findByRoomId(roomId)).thenReturn(Optional.of(policy));
 		log.info("[Given] - operatingPolicyPort.findByRoomId() -> 정책 반환 (슬롯 단위: {})", slotUnit);
-
+		
 		// 예상 슬롯: 월요일이므로 09:00, 09:30, 10:00, 10:30 (4개)
 		List<RoomTimeSlot> expectedSlots = List.of(
 				RoomTimeSlot.available(roomId, testDate, LocalTime.of(9, 0)),
@@ -227,11 +227,11 @@ class TimeSlotGenerationServiceImplTest {
 				slotUnit,
 				List.of()
 		);
-
+		
 		List<RoomOperatingPolicy> allPolicies = List.of(policy1, policy2, policy3);
 		when(operatingPolicyPort.findAll()).thenReturn(allPolicies);
 		log.info("[Given] - operatingPolicyPort.findAll() -> 3개 정책 반환");
-
+		
 		when(operatingPolicyPort.findByRoomId(room1Id)).thenReturn(Optional.of(policy1));
 		when(operatingPolicyPort.findByRoomId(room2Id)).thenReturn(Optional.of(policy2));
 		when(operatingPolicyPort.findByRoomId(room3Id)).thenReturn(Optional.of(policy3));
@@ -359,7 +359,7 @@ class TimeSlotGenerationServiceImplTest {
 		when(operatingPolicyPort.findByRoomId(roomId)).thenReturn(Optional.of(policy));
 		when(timeSlotPort.saveAll(any())).thenThrow(new RuntimeException("DB 저장 실패"));
 		log.info("[Given] - timeSlotPort.saveAll() -> 예외 발생");
-
+		
 		// When & Then
 		log.info("[When & Then] generateSlotsForDate() 호출 시 SlotGenerationFailedException 발생");
 		log.info("[When & Then] - 파라미터: roomId={}, date={}", roomId, testDate);
