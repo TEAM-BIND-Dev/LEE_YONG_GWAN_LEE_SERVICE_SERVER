@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class SlotGenerationRequestedEventMessage {
-
+	
 	private String topic;
 	private String eventType;
 	private String requestId;
@@ -26,7 +26,7 @@ public class SlotGenerationRequestedEventMessage {
 	private LocalDate startDate;
 	private LocalDate endDate;
 	private LocalDateTime requestedAt;
-
+	
 	/**
 	 * SlotGenerationRequestedEvent로부터 메시지 DTO를 생성한다.
 	 * Long ID → String ID 변환
@@ -42,7 +42,7 @@ public class SlotGenerationRequestedEventMessage {
 				event.getRequestedAt()
 		);
 	}
-
+	
 	/**
 	 * 메시지 DTO를 SlotGenerationRequestedEvent로 변환한다.
 	 * String ID → Long ID 변환
