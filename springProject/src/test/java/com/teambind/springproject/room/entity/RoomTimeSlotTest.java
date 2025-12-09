@@ -321,7 +321,7 @@ class RoomTimeSlotTest {
 		void reservationFailureFlow() {
 			// Given
 			RoomTimeSlot slot = RoomTimeSlot.available(101L, LocalDate.now(), LocalTime.of(14, 0));
-
+			
 			// When: 예약 시작
 			slot.markAsPending(1001L);
 			
