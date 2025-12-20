@@ -34,6 +34,7 @@ public class EventConsumer {
 		MESSAGE_TYPE_MAP.put("RefundCompleted", RefundCompletedEventMessage.class);
 		MESSAGE_TYPE_MAP.put("SlotGenerationRequested", SlotGenerationRequestedEventMessage.class);
 		MESSAGE_TYPE_MAP.put("ClosedDateUpdateRequested", ClosedDateUpdateRequestedEventMessage.class);
+		MESSAGE_TYPE_MAP.put("ReservationCancelled", ReservationCancelledEventMessage.class);
 
 		// 결제 서버 이벤트 타입 매핑 (대문자 스네이크 케이스)
 		MESSAGE_TYPE_MAP.put("PAYMENT_COMPLETED", PaymentCompletedEventMessage.class);
@@ -59,8 +60,17 @@ public class EventConsumer {
 		try {
 			// 1. JSON에서 eventType 추출
 			JsonNode jsonNode = objectMapper.readTree(message);
-			String eventType = jsonNode.get("eventType").asText();
-			
+			JsonNode eventTypeNode = jsonNode.get("eventType");
+
+			// eventType 필드가 없는 레거시 메시지는 무시
+			if (eventTypeNode == null || eventTypeNode.isNull()) {
+				log.warn("Skipping message without eventType field: {}",
+						message.length() > 100 ? message.substring(0, 100) + "..." : message);
+				return;
+			}
+
+			String eventType = eventTypeNode.asText();
+
 			log.info("Received event: type={}", eventType);
 			
 			// 2. eventType에 해당하는 Message DTO 클래스 찾기
@@ -115,6 +125,8 @@ public class EventConsumer {
 			return ((SlotGenerationRequestedEventMessage) messageDto).toEvent();
 		} else if (messageDto instanceof ClosedDateUpdateRequestedEventMessage) {
 			return ((ClosedDateUpdateRequestedEventMessage) messageDto).toEvent();
+		} else if (messageDto instanceof ReservationCancelledEventMessage) {
+			return ((ReservationCancelledEventMessage) messageDto).toEvent();
 		}
 
 		throw new IllegalArgumentException("Unknown message type: " + messageDto.getClass().getName());
