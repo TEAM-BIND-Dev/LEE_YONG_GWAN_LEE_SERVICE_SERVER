@@ -2,8 +2,11 @@ package com.teambind.springproject.room.repository;
 
 import com.teambind.springproject.room.entity.RoomOperatingPolicy;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -18,7 +21,7 @@ import java.util.Optional;
  */
 @Repository
 public interface RoomOperatingPolicyRepository extends JpaRepository<RoomOperatingPolicy, Long> {
-	
+
 	/**
 	 * Room ID로 운영 정책을 조회한다.
 	 *
@@ -26,6 +29,25 @@ public interface RoomOperatingPolicyRepository extends JpaRepository<RoomOperati
 	 * @return 정책이 존재하면 Optional에 담아 반환, 없으면 빈 Optional
 	 */
 	Optional<RoomOperatingPolicy> findByRoomId(Long roomId);
+	
+	/**
+	 * Room ID로 운영 정책을 조회한다 (closedDates 포함).
+	 * LazyInitializationException 방지를 위해 fetch join 사용.
+	 *
+	 * @param roomId 룸 ID
+	 * @return 정책이 존재하면 Optional에 담아 반환, 없으면 빈 Optional
+	 */
+	@Query("SELECT DISTINCT p FROM RoomOperatingPolicy p LEFT JOIN FETCH p.closedDates WHERE p.roomId = :roomId")
+	Optional<RoomOperatingPolicy> findByRoomIdWithClosedDates(@Param("roomId") Long roomId);
+	
+	/**
+	 * 모든 운영 정책을 조회한다 (closedDates 포함).
+	 * LazyInitializationException 방지를 위해 fetch join 사용.
+	 *
+	 * @return 모든 정책 목록
+	 */
+	@Query("SELECT DISTINCT p FROM RoomOperatingPolicy p LEFT JOIN FETCH p.closedDates")
+	List<RoomOperatingPolicy> findAllWithClosedDates();
 	
 	/**
 	 * Room ID로 정책이 존재하는지 확인한다.

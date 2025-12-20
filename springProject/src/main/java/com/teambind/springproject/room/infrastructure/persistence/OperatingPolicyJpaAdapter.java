@@ -33,7 +33,7 @@ public class OperatingPolicyJpaAdapter implements OperatingPolicyPort {
 	@Override
 	@Transactional(readOnly = true)
 	public Optional<RoomOperatingPolicy> findByRoomId(Long roomId) {
-		return repository.findByRoomId(roomId);
+		return repository.findByRoomIdWithClosedDates(roomId);
 	}
 	
 	@Override
@@ -55,6 +55,6 @@ public class OperatingPolicyJpaAdapter implements OperatingPolicyPort {
 	@Override
 	@Transactional(readOnly = true)
 	public java.util.List<RoomOperatingPolicy> findAll() {
-		return repository.findAll();
+		return repository.findAllWithClosedDates();
 	}
 }
