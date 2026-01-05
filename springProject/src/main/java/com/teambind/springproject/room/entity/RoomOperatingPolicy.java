@@ -212,6 +212,39 @@ public class RoomOperatingPolicy {
 		this.recurrence = newRecurrence;
 		this.updatedAt = LocalDateTime.now();
 	}
+
+	/**
+	 * 슬롯 단위를 업데이트한다.
+	 *
+	 * @param newSlotUnit 새로운 슬롯 단위
+	 * @throws InvalidRequestException newSlotUnit이 null인 경우
+	 */
+	public void updateSlotUnit(SlotUnit newSlotUnit) {
+		if (newSlotUnit == null) {
+			throw InvalidRequestException.requiredFieldMissing("slotUnit");
+		}
+		this.slotUnit = newSlotUnit;
+		this.updatedAt = LocalDateTime.now();
+	}
+
+	/**
+	 * 운영 시간(주간 스케줄과 슬롯 단위)을 한 번에 업데이트한다.
+	 *
+	 * @param newSchedule 새로운 주간 스케줄
+	 * @param newSlotUnit 새로운 슬롯 단위
+	 * @throws InvalidRequestException 파라미터가 null인 경우
+	 */
+	public void updateOperatingHours(WeeklySlotSchedule newSchedule, SlotUnit newSlotUnit) {
+		if (newSchedule == null) {
+			throw InvalidRequestException.requiredFieldMissing("weeklySchedule");
+		}
+		if (newSlotUnit == null) {
+			throw InvalidRequestException.requiredFieldMissing("slotUnit");
+		}
+		this.weeklySchedule = newSchedule;
+		this.slotUnit = newSlotUnit;
+		this.updatedAt = LocalDateTime.now();
+	}
 	
 	/**
 	 * 휴무일을 추가한다.
