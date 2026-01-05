@@ -49,20 +49,17 @@ public class SlotGenerationRequestedEventHandler implements EventHandler<SlotGen
 					event.getEndDate()
 			);
 			
-			// 4. 완료 상태로 변경
-			request.markAsCompleted(totalSlots);
-			requestRepository.save(request);
-			
 			log.info("Slot generation completed: requestId={}, totalSlots={}",
 					event.getRequestId(), totalSlots);
-			
+
+			// 4. 완료 후 요청 삭제
+			requestRepository.delete(request);
+
 		} catch (Exception e) {
-			// 5. 실패 상태로 변경
+			// 5. 실패 시 요청 삭제
 			log.error("Slot generation failed: requestId={}", event.getRequestId(), e);
-			
-			request.markAsFailed(e.getMessage());
-			requestRepository.save(request);
-			
+			requestRepository.delete(request);
+
 			// 예외를 다시 던지지 않음 - DLQ로 이동하지 않고 상태만 업데이트
 		}
 	}

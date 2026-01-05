@@ -1,12 +1,15 @@
 package com.teambind.springproject.room.controller;
 
 import com.teambind.springproject.room.command.application.ClosedDateSetupApplicationService;
+import com.teambind.springproject.room.command.application.OperatingHoursUpdateApplicationService;
 import com.teambind.springproject.room.command.application.RoomSetupApplicationService;
 import com.teambind.springproject.room.command.domain.service.TimeSlotGenerationService;
 import com.teambind.springproject.room.command.dto.ClosedDateSetupRequest;
+import com.teambind.springproject.room.command.dto.OperatingHoursUpdateRequest;
 import com.teambind.springproject.room.command.dto.RoomOperatingPolicySetupRequest;
 import com.teambind.springproject.room.query.dto.ClosedDateSetupResponse;
 import com.teambind.springproject.room.query.dto.EnsureSlotsResponse;
+import com.teambind.springproject.room.query.dto.OperatingHoursUpdateResponse;
 import com.teambind.springproject.room.query.dto.RoomSetupResponse;
 import com.teambind.springproject.room.query.dto.SlotGenerationStatusResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +32,7 @@ public class RoomSetupController {
 	private final RoomSetupApplicationService setupService;
 	private final ClosedDateSetupApplicationService closedDateSetupService;
 	private final TimeSlotGenerationService timeSlotGenerationService;
+	private final OperatingHoursUpdateApplicationService operatingHoursUpdateService;
 	
 	/**
 	 * 룸 운영 정책을 설정하고 슬롯 생성을 요청한다.
@@ -106,13 +110,36 @@ public class RoomSetupController {
 	@PostMapping("/{roomId}/ensure-slots")
 	public ResponseEntity<EnsureSlotsResponse> ensureSlots(@PathVariable Long roomId) {
 		log.info("POST /api/rooms/setup/{}/ensure-slots", roomId);
-		
+
 		int generatedCount = timeSlotGenerationService.ensureSlotsForNext30Days(roomId);
-		
+
 		EnsureSlotsResponse response = new EnsureSlotsResponse(roomId, generatedCount);
-		
+
 		log.info("Ensured slots for roomId={}: {} slots generated", roomId, generatedCount);
-		
+
 		return ResponseEntity.ok(response);
+	}
+
+	/**
+	 * 운영 시간을 업데이트하고 슬롯을 재생성한다.
+	 * <p>
+	 * 기존 AVAILABLE 슬롯만 삭제하고 새 운영 시간 기준으로 재생성한다.
+	 * CLOSED, RESERVED, PENDING 슬롯은 유지된다.
+	 *
+	 * @param request 운영 시간 업데이트 요청
+	 * @return 업데이트 응답 (요청 ID 포함)
+	 */
+	@PutMapping("/operating-hours")
+	public ResponseEntity<OperatingHoursUpdateResponse> updateOperatingHours(
+			@RequestBody OperatingHoursUpdateRequest request) {
+		log.info("PUT /api/rooms/setup/operating-hours - roomId: {}", request.getRoomId());
+
+		OperatingHoursUpdateResponse response = operatingHoursUpdateService.updateOperatingHours(request);
+
+		log.info("Operating hours update request accepted: requestId={}", response.getRequestId());
+
+		return ResponseEntity
+				.status(HttpStatus.ACCEPTED)
+				.body(response);
 	}
 }
